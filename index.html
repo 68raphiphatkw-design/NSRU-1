@@ -35,6 +35,9 @@
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-10px)' },
                         }
+                    },
+                    transitionTimingFunction: {
+                        'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
                     }
                 }
             }
@@ -248,72 +251,69 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
 
-        .tilt-card { transform-style: preserve-3d; transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease; will-change: transform; -webkit-tap-highlight-color: transparent; }
-        @media (max-width: 768px) { .tilt-card:active { transform: scale(0.94) !important; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); } }
+        .tilt-card { transform-style: preserve-3d; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease; will-change: transform; -webkit-tap-highlight-color: transparent; }
+        .tilt-card:active { transform: scale(0.95) !important; transition: transform 0.15s ease-out; }
         
-        @keyframes slideUpFade { 0% { opacity: 0; transform: translateY(24px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-        .animate-stagger { opacity: 0; animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUpFade { 0% { opacity: 0; transform: translateY(24px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .animate-stagger { opacity: 0; animation: slideUpFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         
-        .chat-slide-up { animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .chat-slide-up { animation: slideUpFade 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
-        .ai-orb-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 40; display: flex; align-items: center; gap: 1rem; flex-direction: row-reverse; }
-        .ai-orb { width: 3.5rem; height: 3.5rem; border-radius: 50%; cursor: pointer; box-shadow: 0 8px 32px rgba(151, 8, 204, 0.4); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .ai-orb-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 40; display: none; align-items: center; gap: 1rem; flex-direction: row-reverse; }
+        @media (min-width: 768px) { .ai-orb-container { display: flex; } }
+        .ai-orb { width: 3.5rem; height: 3.5rem; border-radius: 50%; cursor: pointer; box-shadow: 0 8px 32px rgba(151, 8, 204, 0.4); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
         .ai-orb::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; background: inherit; filter: blur(12px); opacity: 0.6; z-index: -1; }
         .ai-orb:hover { transform: scale(1.15); }
-        .ai-orb:active { transform: scale(0.95); }
+        .ai-orb:active { transform: scale(0.92); transition: transform 0.15s ease-out; }
+
+        /* Bottom Nav Haptic Spring Bounce */
+        @keyframes tapBounce {
+            0% { transform: scale(1); }
+            30% { transform: scale(0.82); }
+            50% { transform: scale(1.12); }
+            70% { transform: scale(0.96); }
+            100% { transform: scale(1); }
+        }
+        .nav-tab-bounce:active i { animation: tapBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        /* Nova AI Pulse Glow Ring */
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(151, 8, 204, 0.5), 0 8px 20px rgba(151, 8, 204, 0.3); }
+            50% { box-shadow: 0 0 0 10px rgba(151, 8, 204, 0), 0 8px 20px rgba(151, 8, 204, 0.3); }
+        }
+        .nova-pulse { animation: pulseGlow 2.5s ease-in-out infinite; }
+
+        /* Badge Styles */
+        .nav-badge {
+            position: absolute; top: 2px; right: 2px;
+            min-width: 16px; height: 16px;
+            background: #ef4444; color: white;
+            font-size: 9px; font-weight: 800;
+            border-radius: 9999px; padding: 0 4px;
+            display: none; align-items: center; justify-content: center;
+            border: 2px solid white; line-height: 1;
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+        }
+        .dark .nav-badge { border-color: #1c1c1e; }
+        .nav-badge.active { display: flex; }
+        .nav-badge-dot {
+            position: absolute; top: 4px; right: 4px;
+            width: 8px; height: 8px;
+            background: #ef4444; border-radius: 50%;
+            display: none;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+        }
+        .dark .nav-badge-dot { border-color: #1c1c1e; }
+        .nav-badge-dot.active { display: block; animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.3); }
+        }
 
         body.modal-open { overflow: hidden; }
         html { visibility: hidden; }
         html.loaded { visibility: visible; }
-
-        /* Liquid Glass Design System */
-        .liquid-glass {
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 
-                inset 0 1px 1px rgba(255, 255, 255, 0.9),
-                inset 0 -1px 1px rgba(255, 255, 255, 0.2),
-                0 8px 32px rgba(0, 0, 0, 0.08);
-            backdrop-filter: blur(28px) saturate(180%);
-            -webkit-backdrop-filter: blur(28px) saturate(180%);
-        }
-        .dark .liquid-glass {
-            background: rgba(28, 28, 30, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 
-                inset 0 1px 1px rgba(255, 255, 255, 0.15),
-                inset 0 -1px 1px rgba(255, 255, 255, 0.02),
-                0 8px 32px rgba(0, 0, 0, 0.4);
-        }
-        
-        .liquid-pill {
-            background: rgba(255, 255, 255, 0.55);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 4px 15px rgba(0,0,0,0.05);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-        }
-        .dark .liquid-pill {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        @keyframes orb-float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(5%, -5%) scale(1.05); }
-            66% { transform: translate(-5%, 5%) scale(0.95); }
-        }
-        .ambient-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
-            animation: orb-float 20s ease-in-out infinite;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .dark .ambient-orb { opacity: 0.35; filter: blur(100px); }
     </style>
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { document.documentElement.classList.add('dark'); } 
@@ -322,17 +322,10 @@
         setTimeout(() => document.documentElement.classList.add('loaded'), 1000);
     </script>
 </head>
-<body class="h-[100dvh] w-screen overflow-hidden flex font-sans text-gray-900 dark:text-gray-100 relative bg-apple-light dark:bg-black transition-colors duration-500">
-
-    <!-- Ambient Liquid Background -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="ambient-orb bg-purple-400 dark:bg-purple-800 w-[60vw] max-w-[600px] h-[60vw] max-h-[600px] -top-[10%] -right-[10%]"></div>
-        <div class="ambient-orb bg-sky-300 dark:bg-blue-900 w-[70vw] max-w-[700px] h-[70vw] max-h-[700px] top-[40%] -left-[10%] animate-[orb-float_25s_ease-in-out_infinite_reverse]"></div>
-        <div class="ambient-orb bg-orange-200 dark:bg-orange-900 w-[50vw] max-w-[500px] h-[50vw] max-h-[500px] -bottom-[10%] right-[15%] animate-[orb-float_18s_ease-in-out_infinite]"></div>
-    </div>
+<body class="h-[100dvh] w-screen overflow-hidden flex font-sans text-gray-900 dark:text-gray-100 relative">
 
     <!-- Interactive AI Orb (Visible on Mobile & PC) -->
-    <div class="ai-orb-container flex z-40">
+    <div class="ai-orb-container flex">
         <div class="ai-orb ai-gradient-bg animate-float flex flex-col items-center justify-center text-white" onclick="toggleChatbot()">
             <i data-lucide="sparkles" class="w-6 h-6"></i>
         </div>
@@ -387,23 +380,48 @@
             <h1 class="text-2xl font-bold tracking-tight">NSRU<span class="ai-gradient-text ml-1">Portal</span></h1>
         </div>
 
-        <nav class="flex-1 px-4 space-y-2 mt-4">
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-100 dark:bg-[#2c2c2e] text-gray-900 dark:text-white font-medium transition-colors">
-                <i data-lucide="layout-grid" class="w-5 h-5"></i>
+        <nav class="flex-1 px-4 space-y-1 mt-4 overflow-y-auto hide-scrollbar pb-4">
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-100 dark:bg-[#2c2c2e] text-gray-900 dark:text-white font-medium transition-colors mb-4">
+                <i data-lucide="layout-grid" class="w-5 h-5 drop-shadow-sm"></i>
                 <span data-i18n="nav_dashboard">Dashboard</span>
             </a>
             
-            <a href="#" class="system-link flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors font-medium cursor-pointer" data-modal-id="regis" data-url="https://regis.nsru.ac.th/" data-icon="graduation-cap">
-                <i data-lucide="graduation-cap" class="w-5 h-5"></i>
-                <span data-i18n="nav_regis">Regis</span>
+            <p class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-4 pb-2 mt-4">Academics</p>
+            <a href="#" class="system-link flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors font-medium cursor-pointer" data-modal-id="regis" data-url="https://regis.nsru.ac.th/" data-icon="graduation-cap">
+                <i data-lucide="graduation-cap" class="w-4 h-4 text-purple-500 drop-shadow-sm"></i>
+                <span class="text-sm" data-i18n="nav_regis">Regis</span>
             </a>
-             <a href="#" class="system-link flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors font-medium cursor-pointer" data-modal-id="dorm" data-url="https://dorm.nsru.ac.th/" data-icon="home">
-                <i data-lucide="home" class="w-5 h-5"></i>
-                <span data-i18n="nav_dorm">Dormitory</span>
+            <a href="#" class="system-link flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors font-medium cursor-pointer" data-modal-id="elearning" data-url="#" data-icon="monitor-play">
+                <i data-lucide="monitor-play" class="w-4 h-4 text-emerald-500 drop-shadow-sm"></i>
+                <span class="text-sm" data-i18n="heading_elearning">E-Learning</span>
             </a>
-             <a href="#" class="system-link flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors font-medium cursor-pointer" data-modal-id="sd" data-url="https://sd.nsru.ac.th/" data-icon="users">
-                <i data-lucide="users" class="w-5 h-5"></i>
-                <span data-i18n="nav_sd">Student Dev</span>
+            <a href="#" class="system-link flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors font-medium cursor-pointer" data-modal-id="calendar" data-url="#" data-icon="calendar">
+                <i data-lucide="calendar" class="w-4 h-4 text-red-500 drop-shadow-sm"></i>
+                <span class="text-sm" data-i18n="heading_calendar">Calendar</span>
+            </a>
+
+            <p class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-4 pb-2 mt-6">Campus Life</p>
+            <a href="#" class="system-link flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors font-medium cursor-pointer" data-modal-id="dorm" data-url="https://dorm.nsru.ac.th/" data-icon="home">
+                <i data-lucide="home" class="w-4 h-4 text-orange-500 drop-shadow-sm"></i>
+                <span class="text-sm" data-i18n="nav_dorm">Dormitory</span>
+            </a>
+             <a href="#" class="system-link flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors font-medium cursor-pointer" data-modal-id="sd" data-url="https://sd.nsru.ac.th/" data-icon="users">
+                <i data-lucide="users" class="w-4 h-4 text-blue-500 drop-shadow-sm"></i>
+                <span class="text-sm" data-i18n="nav_sd">Student Dev</span>
+            </a>
+
+            <p class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-4 pb-2 mt-6">Services</p>
+             <a href="#" class="system-link flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors font-medium cursor-pointer" data-modal-id="noc" data-url="https://noc.nsru.ac.th/" data-icon="router">
+                <i data-lucide="router" class="w-4 h-4 text-gray-500 drop-shadow-sm"></i>
+                <span class="text-sm" data-i18n="heading_noc">NOC Services</span>
+            </a>
+            <a href="#" onclick="openMapModal(); event.preventDefault();" class="flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors font-medium cursor-pointer">
+                <i data-lucide="map" class="w-4 h-4 text-emerald-600 drop-shadow-sm"></i>
+                <span class="text-sm" data-i18n="heading_map">Campus Map</span>
+            </a>
+            <a href="#" class="system-link flex items-center space-x-3 px-4 py-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors font-medium cursor-pointer" data-modal-id="about" data-url="#" data-icon="info">
+                <i data-lucide="info" class="w-4 h-4 text-indigo-500 drop-shadow-sm"></i>
+                <span class="text-sm" data-i18n="heading_about">About Portal</span>
             </a>
         </nav>
 
@@ -445,7 +463,7 @@
         </header>
 
         <!-- Scrollable Content -->
-        <div class="flex-1 overflow-y-auto w-full px-5 py-6 md:p-10 lg:p-12 pb-[100px] md:pb-24 hide-scrollbar">
+        <div class="flex-1 overflow-y-auto w-full px-5 py-6 md:p-10 lg:p-12 pb-[120px] md:pb-24 hide-scrollbar">
             <div class="max-w-5xl mx-auto">
                 
                 <div class="mb-6 md:mb-8 animate-stagger" style="animation-delay: 50ms;">
@@ -454,27 +472,27 @@
                     </h2>
                     
                     <div class="flex flex-wrap items-center gap-3">
-                        <div class="inline-flex items-center space-x-2 text-gray-600 dark:text-gray-300 bg-white/60 dark:bg-white/5 backdrop-blur-xl px-4 py-2.5 rounded-full border border-white/60 dark:border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
-                            <i data-lucide="clock" class="w-4 h-4 md:w-5 md:h-5 text-purple-500"></i>
-                            <p class="text-sm md:text-[15px] font-semibold tracking-wide" id="live-clock">Loading...</p>
+                        <div class="inline-flex items-center space-x-2 text-gray-600 dark:text-gray-300 bg-white/60 dark:bg-white/5 backdrop-blur-xl px-4 py-2.5 rounded-full border border-white/60 dark:border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)] active:scale-[0.95] transition-all duration-400 ease-spring cursor-pointer">
+                            <i data-lucide="clock" class="w-4 h-4 md:w-5 md:h-5 text-purple-500 drop-shadow-sm"></i>
+                            <p class="text-sm md:text-[15px] font-bold tracking-tight" id="live-clock">Loading...</p>
                         </div>
 
                         <!-- Live Weather Pill (Nakhon Sawan) -->
-                        <div id="weather-pill" class="inline-flex items-center space-x-2 text-gray-700 dark:text-gray-200 bg-white/60 dark:bg-white/5 backdrop-blur-xl px-4 py-2 md:py-2.5 rounded-full border border-white/60 dark:border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)] opacity-0 transition-all duration-1000 transform hover:scale-105 cursor-pointer">
+                        <div id="weather-pill" class="inline-flex items-center space-x-2 text-gray-700 dark:text-gray-200 bg-white/60 dark:bg-white/5 backdrop-blur-xl px-4 py-2 md:py-2.5 rounded-full border border-white/60 dark:border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)] opacity-0 transform active:scale-[0.95] transition-all duration-400 ease-spring cursor-pointer">
                             <span id="weather-icon" class="text-lg md:text-xl drop-shadow-sm">☁️</span>
                             <div class="flex flex-col justify-center">
                                 <span class="text-[9px] md:text-[10px] font-extrabold leading-none text-sky-500 uppercase tracking-widest mb-0.5">Nakhon Sawan</span>
-                                <span class="text-[12px] md:text-sm font-bold tracking-tight leading-none" id="weather-temp">--°C</span>
+                                <span class="text-[12px] md:text-[14px] font-bold tracking-tight leading-none" id="weather-temp">--°C</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- NEW: Digital Planner Capsules (Timetable + Countdowns) -->
-                <div class="flex flex-col md:flex-row gap-3 mb-6 md:mb-8 animate-stagger" style="animation-delay: 60ms;">
+                <!-- NEW: Digital Planner Capsules (Timetable + Countdowns) - MOBILE ONLY -->
+                <div class="flex flex-col md:hidden gap-3 mb-6 animate-stagger" style="animation-delay: 60ms;">
                     
                     <!-- Timetable Capsule -->
-                    <div class="flex-1 bg-white/80 dark:bg-apple-cardDark/80 backdrop-blur-xl rounded-[24px] p-2 pr-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)] border border-gray-100 dark:border-white/5 flex items-center justify-between cursor-pointer hover:bg-white dark:hover:bg-apple-cardDark transition-colors group active:scale-[0.98]" onclick="openTimetableConfig()">
+                    <div class="flex-1 bg-white/80 dark:bg-apple-cardDark/80 backdrop-blur-xl rounded-[24px] p-2 pr-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)] border border-gray-100 dark:border-white/5 flex items-center justify-between cursor-pointer hover:bg-white dark:hover:bg-apple-cardDark transition-all duration-400 ease-spring group active:scale-[0.96]" onclick="openTimetableConfig()">
                         <div id="timetable-display" class="flex items-center flex-1 overflow-hidden min-h-[46px]">
                             <!-- JS Injected -->
                         </div>
@@ -482,7 +500,7 @@
                     </div>
 
                     <!-- Countdown Capsule -->
-                    <div class="flex-1 bg-gradient-to-r from-orange-50/80 to-red-50/80 dark:from-orange-500/10 dark:to-red-500/10 backdrop-blur-xl rounded-[24px] p-2 pr-4 shadow-[0_4px_20px_rgba(239,68,68,0.05)] dark:shadow-[0_4px_20px_rgba(239,68,68,0.1)] border border-orange-100 dark:border-orange-500/20 flex items-center justify-between cursor-pointer hover:from-orange-100/90 hover:to-red-100/90 dark:hover:from-orange-500/20 dark:hover:to-red-500/20 transition-colors group active:scale-[0.98]" onclick="openCountdownConfig()">
+                    <div class="flex-1 bg-gradient-to-r from-orange-50/80 to-red-50/80 dark:from-orange-500/10 dark:to-red-500/10 backdrop-blur-xl rounded-[24px] p-2 pr-4 shadow-[0_4px_20px_rgba(239,68,68,0.05)] dark:shadow-[0_4px_20px_rgba(239,68,68,0.1)] border border-orange-100 dark:border-orange-500/20 flex items-center justify-between cursor-pointer hover:from-orange-100/90 hover:to-red-100/90 dark:hover:from-orange-500/20 dark:hover:to-red-500/20 transition-all duration-400 ease-spring group active:scale-[0.96]" onclick="openCountdownConfig()">
                         <div id="countdown-display" class="flex items-center flex-1 overflow-hidden min-h-[46px]">
                             <!-- JS Injected -->
                         </div>
@@ -503,141 +521,100 @@
                     <div class="absolute bottom-4 right-5 flex gap-1.5 z-20" id="news-dots"></div>
                 </div>
 
-                <!-- CARDS GRID -->
-                <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                <!-- DESKTOP DASHBOARD PANELS (Hidden on Mobile) -->
+                <div class="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-6 animate-stagger mb-8" style="animation-delay: 100ms;">
+                    
+                    <!-- Unpacked Timetable -->
+                    <div class="bg-white dark:bg-apple-cardDark rounded-[28px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 flex flex-col h-[350px]">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-2"><i data-lucide="calendar-clock" class="w-5 h-5 text-blue-500"></i> ตารางเรียนวันนี้</h3>
+                            <button onclick="openTimetableConfig()" class="w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 flex items-center justify-center transition-colors text-gray-400 group"><i data-lucide="settings-2" class="w-4 h-4 group-hover:rotate-90 transition-transform"></i></button>
+                        </div>
+                        <div id="desktop-timetable-list" class="flex-1 py-1 overflow-y-auto space-y-3 pr-2 hide-scrollbar">
+                            <!-- JS injected -->
+                        </div>
+                    </div>
+
+                    <!-- Unpacked Countdown -->
+                    <div class="bg-white dark:bg-apple-cardDark rounded-[28px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 flex flex-col h-[350px]">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-2"><i data-lucide="timer" class="w-5 h-5 text-orange-500"></i> นับถอยหลังด่วน</h3>
+                            <button onclick="openCountdownConfig()" class="w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 flex items-center justify-center transition-colors text-gray-400 group"><i data-lucide="plus" class="w-4 h-4 group-hover:scale-110 transition-transform"></i></button>
+                        </div>
+                        <div id="desktop-countdown-list" class="flex-1 py-1 overflow-y-auto space-y-3 pr-2 hide-scrollbar">
+                            <!-- JS injected -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- QUICK ACTION GRID (Mobile Only Super App Layout) -->
+                <div class="grid grid-cols-4 gap-y-6 gap-x-2 md:hidden px-1 mb-10 animate-stagger" style="animation-delay: 100ms;">
                     
                     <!-- 1. Regis -->
-                    <a href="#" class="system-link tilt-card group animate-stagger col-span-2 relative overflow-hidden flex flex-row md:flex-col items-center md:items-start justify-between bg-white dark:bg-apple-cardDark rounded-[28px] md:rounded-3xl p-5 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 h-[130px] md:h-[240px]"
-                       style="animation-delay: 100ms;" data-modal-id="regis" data-url="https://regis.nsru.ac.th/apr-login/login/2" data-icon="graduation-cap">
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
-                        <div class="flex items-center gap-4 md:contents w-full">
-                            <div class="w-16 h-16 md:w-14 md:h-14 shrink-0 bg-purple-50 dark:bg-purple-900/20 rounded-[20px] md:rounded-2xl flex items-center justify-center md:mb-5 group-hover:scale-110 transition-transform duration-300 shadow-inner">
-                                <i data-lucide="graduation-cap" class="w-8 h-8 md:w-7 md:h-7 text-purple-600 dark:text-purple-400"></i>
-                            </div>
-                            <div class="flex-1 pr-1 md:pr-0">
-                                <h3 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-0.5 md:mb-2 line-clamp-1" data-i18n="heading_regis">Regis</h3>
-                                <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 md:line-clamp-3 leading-relaxed" data-i18n="desc_regis">ระบบส่วนกลางสำหรับลงทะเบียนเรียน</p>
-                            </div>
-                            <div class="w-8 h-8 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center md:hidden shrink-0">
-                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-                            </div>
+                    <a href="#" class="system-link group flex flex-col items-center justify-start text-center cursor-pointer active:scale-90 transition-transform duration-300 ease-spring" data-modal-id="regis" data-url="https://regis.nsru.ac.th/" data-icon="graduation-cap">
+                        <div class="w-[60px] h-[60px] rounded-[18px] bg-purple-50 dark:bg-purple-900/40 flex items-center justify-center mb-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_4px_10px_rgba(0,0,0,0.03)] border border-purple-100/50 dark:border-white/5 transition-transform group-active:scale-95">
+                            <i data-lucide="graduation-cap" class="w-7 h-7 text-purple-600 dark:text-purple-400 drop-shadow-sm"></i>
                         </div>
-                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors w-full">
-                            <span data-i18n="btn_enter">Access System</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
+                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300 tracking-tight leading-tight" data-i18n="nav_regis">Regis</span>
                     </a>
 
-                    <!-- 2. Student Dev -->
-                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 aspect-square md:aspect-auto md:h-[240px]"
-                       style="animation-delay: 150ms;" data-modal-id="sd" data-url="https://sd.nsru.ac.th/" data-icon="users">
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 dark:bg-blue-900/20 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
-                            <i data-lucide="users" class="w-6 h-6 md:w-7 md:h-7 text-blue-600 dark:text-blue-400"></i>
+                    <!-- 2. E-Learning -->
+                    <a href="#" class="system-link group flex flex-col items-center justify-start text-center cursor-pointer active:scale-90 transition-transform duration-300 ease-spring" data-modal-id="elearning" data-url="#" data-icon="monitor-play">
+                        <div class="w-[60px] h-[60px] rounded-[18px] bg-emerald-50 dark:bg-emerald-900/40 flex items-center justify-center mb-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_4px_10px_rgba(0,0,0,0.03)] border border-emerald-100/50 dark:border-white/5 transition-transform group-active:scale-95">
+                            <i data-lucide="monitor-play" class="w-7 h-7 text-emerald-600 dark:text-emerald-400 drop-shadow-sm"></i>
                         </div>
-                        <div>
-                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_sd">Student Dev</h3>
-                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_sd">ข้อมูลสะสมหน่วยกิตกิจกรรม</p>
-                        </div>
-                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
+                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300 tracking-tight leading-tight" data-i18n="heading_elearning">E-Learn</span>
                     </a>
 
-                    <!-- 3. Dormitory -->
-                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 aspect-square md:aspect-auto md:h-[240px]"
-                       style="animation-delay: 200ms;" data-modal-id="dorm" data-url="https://dorm.nsru.ac.th/" data-icon="home">
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-orange-50 dark:bg-orange-900/20 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
-                            <i data-lucide="home" class="w-6 h-6 md:w-7 md:h-7 text-orange-600 dark:text-orange-400"></i>
+                    <!-- 3. Calendar -->
+                    <a href="#" class="system-link group flex flex-col items-center justify-start text-center cursor-pointer active:scale-90 transition-transform duration-300 ease-spring" data-modal-id="calendar" data-url="#" data-icon="calendar">
+                        <div class="w-[60px] h-[60px] rounded-[18px] bg-red-50 dark:bg-red-900/40 flex items-center justify-center mb-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_4px_10px_rgba(0,0,0,0.03)] border border-red-100/50 dark:border-white/5 transition-transform group-active:scale-95">
+                            <i data-lucide="calendar" class="w-7 h-7 text-red-600 dark:text-red-400 drop-shadow-sm"></i>
                         </div>
-                        <div>
-                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_dorm">Dormitory</h3>
-                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_dorm">ระบบจัดการหอพักภายในมหาวิทยาลัย</p>
-                        </div>
-                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
+                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300 tracking-tight leading-tight" data-i18n="heading_calendar">ปฏิทิน</span>
                     </a>
 
-                    <!-- 4. E-Learning -->
-                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 aspect-square md:aspect-auto md:h-[240px]"
-                       style="animation-delay: 250ms;" data-modal-id="elearning" data-url="#" data-icon="monitor-play">
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-emerald-50 dark:bg-emerald-900/20 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
-                            <i data-lucide="monitor-play" class="w-6 h-6 md:w-7 md:h-7 text-emerald-600 dark:text-emerald-400"></i>
+                    <!-- 4. Dormitory -->
+                    <a href="#" class="system-link group flex flex-col items-center justify-start text-center cursor-pointer active:scale-90 transition-transform duration-300 ease-spring" data-modal-id="dorm" data-url="https://dorm.nsru.ac.th/" data-icon="home">
+                        <div class="w-[60px] h-[60px] rounded-[18px] bg-orange-50 dark:bg-orange-900/40 flex items-center justify-center mb-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_4px_10px_rgba(0,0,0,0.03)] border border-orange-100/50 dark:border-white/5 transition-transform group-active:scale-95">
+                            <i data-lucide="home" class="w-7 h-7 text-orange-600 dark:text-orange-400 drop-shadow-sm"></i>
                         </div>
-                        <div>
-                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_elearning">E-Learning</h3>
-                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_elearning">แพลตฟอร์มเข้าเรียนออนไลน์</p>
-                        </div>
-                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
+                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300 tracking-tight leading-tight" data-i18n="nav_dorm">หอพัก</span>
                     </a>
 
-                    <!-- 5. NOC Services -->
-                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 aspect-square md:aspect-auto md:h-[240px]"
-                       style="animation-delay: 300ms;" data-modal-id="noc" data-url="https://noc.nsru.ac.th/" data-icon="router">
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-gray-100 dark:bg-white/10 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
-                            <i data-lucide="router" class="w-6 h-6 md:w-7 md:h-7 text-gray-700 dark:text-gray-300"></i>
+                    <!-- 5. Student Dev -->
+                    <a href="#" class="system-link group flex flex-col items-center justify-start text-center cursor-pointer active:scale-90 transition-transform duration-300 ease-spring" data-modal-id="sd" data-url="https://sd.nsru.ac.th/" data-icon="users">
+                        <div class="w-[60px] h-[60px] rounded-[18px] bg-blue-50 dark:bg-blue-900/40 flex items-center justify-center mb-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_4px_10px_rgba(0,0,0,0.03)] border border-blue-100/50 dark:border-white/5 transition-transform group-active:scale-95">
+                            <i data-lucide="users" class="w-7 h-7 text-blue-600 dark:text-blue-400 drop-shadow-sm"></i>
                         </div>
-                        <div>
-                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_noc">NOC Services</h3>
-                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_noc">ศูนย์เทคโนโลยีสารสนเทศ</p>
-                        </div>
-                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
+                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300 tracking-tight leading-tight" data-i18n="nav_sd">กิจกรรม</span>
                     </a>
 
-                    <!-- 6. Calendar -->
-                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 border border-gray-100 dark:border-white/5 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] aspect-square md:aspect-auto md:h-[240px]"
-                       style="animation-delay: 350ms;" data-modal-id="calendar" data-url="#" data-icon="calendar">
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-red-50 dark:bg-red-900/20 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
-                            <i data-lucide="calendar" class="w-6 h-6 md:w-7 md:h-7 text-red-600 dark:text-red-400"></i>
+                    <!-- 6. NOC Services -->
+                    <a href="#" class="system-link group flex flex-col items-center justify-start text-center cursor-pointer active:scale-90 transition-transform duration-300 ease-spring" data-modal-id="noc" data-url="https://noc.nsru.ac.th/" data-icon="router">
+                        <div class="w-[60px] h-[60px] rounded-[18px] bg-gray-100 dark:bg-white/10 flex items-center justify-center mb-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_4px_10px_rgba(0,0,0,0.03)] border border-gray-200/50 dark:border-white/5 transition-transform group-active:scale-95">
+                            <i data-lucide="router" class="w-7 h-7 text-gray-700 dark:text-gray-300 drop-shadow-sm"></i>
                         </div>
-                        <div>
-                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_calendar">Calendar</h3>
-                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_calendar">เช็คปฏิทินแบบละเอียด</p>
-                        </div>
-                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
+                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300 tracking-tight leading-tight" data-i18n="heading_noc">ไอที</span>
                     </a>
 
-                    <!-- 7. About Portal -->
-                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 relative overflow-hidden flex flex-col items-center justify-center md:items-start md:justify-between text-center md:text-left bg-gradient-to-br from-purple-500 to-indigo-600 dark:from-purple-900/50 dark:to-indigo-900/50 rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(99,102,241,0.2)] aspect-square md:aspect-auto md:h-[240px]"
-                       style="animation-delay: 400ms;" data-modal-id="about" data-url="#" data-icon="info">
-                        <i data-lucide="rocket" class="w-24 h-24 absolute -right-4 -bottom-4 text-white/10 dark:text-white/5 transform rotate-12"></i>
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-white/20 backdrop-blur-md rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
-                            <i data-lucide="info" class="w-6 h-6 md:w-7 md:h-7 text-white"></i>
+                    <!-- 7. Map -->
+                    <a href="#" onclick="openMapModal(); event.preventDefault();" class="group flex flex-col items-center justify-start text-center cursor-pointer active:scale-90 transition-transform duration-300 ease-spring">
+                        <div class="w-[60px] h-[60px] rounded-[18px] bg-sky-50 dark:bg-sky-900/40 flex items-center justify-center mb-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_4px_10px_rgba(0,0,0,0.03)] border border-sky-100/50 dark:border-white/5 transition-transform group-active:scale-95">
+                            <i data-lucide="map" class="w-7 h-7 text-sky-600 dark:text-sky-400 drop-shadow-sm"></i>
                         </div>
-                        <div>
-                            <h3 class="text-sm md:text-2xl font-bold text-white tracking-tight mb-1" data-i18n="heading_about">About Portal</h3>
-                            <p class="text-white/80 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_about">รวมทุกเว็บไซต์มารวมไว้ให้จิ้มจบในที่เดียว</p>
-                        </div>
-                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-white/60 group-hover:text-white transition-colors">
-                            <span data-i18n="btn_read_more">Read More</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
+                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300 tracking-tight leading-tight" data-i18n="heading_map">แผนที่</span>
                     </a>
 
-                    <!-- 8. Campus Map -->
-                    <a href="#" onclick="openMapModal(); event.preventDefault();" class="tilt-card group animate-stagger col-span-1 lg:col-span-2 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 aspect-square md:aspect-auto md:h-[240px]"
-                       style="animation-delay: 450ms;">
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br from-emerald-400 to-teal-600 pointer-events-none"></div>
-                        <div class="w-12 h-12 md:w-14 md:h-14 bg-emerald-50 dark:bg-emerald-900/20 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300 border border-emerald-100 dark:border-white/5">
-                            <i data-lucide="map" class="w-6 h-6 md:w-7 md:h-7 text-emerald-600 dark:text-emerald-400"></i>
+                    <!-- 8. About -->
+                    <a href="#" class="system-link group flex flex-col items-center justify-start text-center cursor-pointer active:scale-90 transition-transform duration-300 ease-spring" data-modal-id="about" data-url="#" data-icon="info">
+                        <div class="w-[60px] h-[60px] rounded-[18px] bg-indigo-50 dark:bg-indigo-900/40 flex items-center justify-center mb-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_4px_10px_rgba(0,0,0,0.03)] border border-indigo-100/50 dark:border-white/5 transition-transform group-active:scale-95">
+                            <i data-lucide="info" class="w-7 h-7 text-indigo-600 dark:text-indigo-400 drop-shadow-sm"></i>
                         </div>
-                        <div>
-                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_map">Campus Map</h3>
-                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_map">แผนที่ตึกเรียน ม.ราชภัฏ</p>
-                        </div>
-                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                            <span data-i18n="btn_read_more">View Map</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
+                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300 tracking-tight leading-tight" data-i18n="heading_about">เกี่ยวกับ</span>
                     </a>
+
                 </div>
 
                 <footer class="mt-16 mb-4 text-center animate-stagger" style="animation-delay: 600ms;">
@@ -653,10 +630,48 @@
         </div>
     </main>
 
+    <!-- Mobile Bottom Navigation Bar (Phase 5 - Upgraded) -->
+    <nav id="bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#1c1c1e]/90 backdrop-blur-xl border-t border-gray-200/50 dark:border-white/10 pb-4 pt-1 px-4 sm:px-6 flex justify-between items-center shadow-[0_-8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_-8px_30px_rgba(0,0,0,0.3)]">
+        
+        <!-- Home -->
+        <a href="#" class="nav-tab-bounce flex flex-col items-center p-2 text-blue-600 dark:text-blue-400 transition-transform ease-spring group w-14 relative">
+            <i data-lucide="home" class="w-[22px] h-[22px] mb-1 relative top-[1px] stroke-[2.5px] fill-blue-100 dark:fill-blue-900/40"></i>
+            <span class="text-[9px] font-bold tracking-tight">Home</span>
+        </a>
+
+        <!-- Schedule (with badge) -->
+        <a href="#" onclick="openTimetableConfig(); event.preventDefault();" class="nav-tab-bounce flex flex-col items-center p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-transform ease-spring group w-14 relative">
+            <i data-lucide="calendar-clock" class="w-5 h-5 mb-1 stroke-[2px]"></i>
+            <span id="schedule-badge" class="nav-badge">0</span>
+            <span class="text-[9px] font-medium tracking-tight">Schedule</span>
+        </a>
+
+        <!-- Center FAB (Nova AI) - Context Aware -->
+        <a href="#" onclick="toggleChatbot(); event.preventDefault();" class="nav-tab-bounce flex flex-col items-center -mt-8 transition-transform ease-spring relative z-10 group px-2">
+            <div id="nova-fab" class="w-[52px] h-[52px] rounded-full ai-gradient-bg nova-pulse flex items-center justify-center border-[4px] border-white dark:border-[#1c1c1e] transition-shadow">
+                <i id="nova-fab-icon" data-lucide="sparkles" class="w-5 h-5 text-white group-hover:scale-110 transition-transform"></i>
+            </div>
+            <span id="nova-fab-label" class="text-[9px] font-bold tracking-tight mt-1 text-gray-700 dark:text-gray-300">Nova AI</span>
+        </a>
+
+        <!-- Alerts (with badge dot) -->
+        <a href="#" onclick="openCountdownConfig(); event.preventDefault();" class="nav-tab-bounce flex flex-col items-center p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-transform ease-spring group w-14 relative">
+            <i data-lucide="bell" class="w-5 h-5 mb-1 stroke-[2px] group-hover:rotate-12 transition-transform"></i>
+            <span id="alerts-badge-dot" class="nav-badge-dot"></span>
+            <span class="text-[9px] font-medium tracking-tight">Alerts</span>
+        </a>
+
+        <!-- Profile -->
+        <a href="#" class="nav-tab-bounce flex flex-col items-center p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-transform ease-spring group w-14 relative">
+            <i data-lucide="user" class="w-5 h-5 mb-1 stroke-[2px]"></i>
+            <span class="text-[9px] font-medium tracking-tight">Profile</span>
+        </a>
+    </nav>
+
     <!-- UI Modal -->
     <div id="info-modal" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-400 ease-out">
         <div class="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-md" onclick="closeModal()"></div>
-        <div id="modal-panel" class="bg-white dark:bg-apple-cardDark w-[90%] max-w-lg rounded-3xl shadow-2xl relative z-10 transform scale-95 opacity-0 transition-all duration-400 ease-out p-6 md:p-8 border border-white/20 dark:border-white/10">
+        <div id="modal-panel" class="bg-white dark:bg-apple-cardDark w-[90%] max-w-lg rounded-3xl shadow-2xl relative z-10 transform scale-95 opacity-0 transition-all duration-400 ease-spring p-6 md:p-8 border border-white/20 dark:border-white/10">
             <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 dark:hover:text-white bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
@@ -671,8 +686,8 @@
                 <p id="modal-importance" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">Importance text.</p>
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-3">
-                <button onclick="closeModal()" data-i18n="modal_cancel" class="w-full sm:w-1/3 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-900 dark:text-white rounded-xl py-3.5 font-semibold transition-colors text-sm">Cancel</button>
-                <a id="modal-continue" href="#" target="_blank" onclick="closeModal()" class="w-full sm:w-2/3 ai-gradient-bg text-white rounded-xl py-3.5 font-bold text-center hover:opacity-90 transition-opacity shadow-[0_8px_20px_rgba(151,8,204,0.2)] text-sm">
+                <button onclick="closeModal()" data-i18n="modal_cancel" class="w-full sm:w-1/3 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-900 dark:text-white rounded-xl py-3.5 font-semibold transition-all duration-300 ease-spring active:scale-[0.96] text-sm">Cancel</button>
+                <a id="modal-continue" href="#" target="_blank" onclick="closeModal()" class="w-full sm:w-2/3 ai-gradient-bg text-white rounded-xl py-3.5 font-bold text-center hover:opacity-90 transition-all duration-300 ease-spring shadow-[0_8px_20px_rgba(151,8,204,0.2)] active:scale-[0.96] text-sm">
                     <span data-i18n="modal_continue">Continue to System</span>
                 </a>
             </div>
@@ -682,7 +697,7 @@
     <!-- Map Modal -->
     <div id="map-modal" class="fixed inset-0 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-400 ease-out">
         <div class="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md" onclick="closeMapModal()"></div>
-        <div id="map-panel" class="bg-gray-100 dark:bg-black w-[95%] md:w-[85vw] max-w-6xl h-[85vh] rounded-3xl shadow-2xl relative z-10 transform scale-95 opacity-0 transition-all duration-400 ease-out flex flex-col overflow-hidden border border-white/20 dark:border-white/10">
+        <div id="map-panel" class="bg-gray-100 dark:bg-black w-[95%] md:w-[85vw] max-w-6xl h-[85vh] rounded-3xl shadow-2xl relative z-10 transform scale-95 opacity-0 transition-all duration-500 ease-spring flex flex-col overflow-hidden border border-white/20 dark:border-white/10">
             
             <!-- Map Header -->
             <div class="px-5 py-4 border-b border-gray-200 dark:border-white/10 flex items-center justify-between bg-white/80 dark:bg-apple-cardDark/80 backdrop-blur-xl z-20 shrink-0">
@@ -726,7 +741,7 @@
     <!-- Config Modal (Shared for Timetable & Countdown) -->
     <div id="config-modal" class="fixed inset-0 z-[70] flex items-end md:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 ease-out">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeConfigModal()"></div>
-        <div id="config-panel" class="bg-white dark:bg-[#1c1c1e] w-full md:w-[90%] max-w-lg md:rounded-3xl rounded-t-3xl md:rounded-b-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] md:shadow-2xl relative z-10 transform translate-y-full md:translate-y-0 md:scale-95 opacity-100 md:opacity-0 transition-all duration-400 ease-in-out flex flex-col max-h-[85vh] md:max-h-[80vh] border border-white/20 dark:border-white/10">
+        <div id="config-panel" class="bg-white dark:bg-[#1c1c1e] w-full md:w-[90%] max-w-lg md:rounded-3xl rounded-t-3xl md:rounded-b-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] md:shadow-2xl relative z-10 transform translate-y-full md:translate-y-0 md:scale-95 opacity-100 md:opacity-0 transition-all duration-500 ease-spring flex flex-col max-h-[85vh] md:max-h-[80vh] border border-white/20 dark:border-white/10">
             
             <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mt-3 md:hidden"></div>
             
@@ -981,18 +996,25 @@
         let timetable = JSON.parse(localStorage.getItem('nsru_timetable')) || [];
         function updateTimetableUI() {
             const display = document.getElementById('timetable-display');
+            const dtList = document.getElementById('desktop-timetable-list');
+            
             if(timetable.length === 0) {
-                display.innerHTML = `<div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0 mr-3"><i data-lucide="coffee" class="w-5 h-5 text-blue-400"></i></div><div class="flex flex-col overflow-hidden"><p class="text-[13px] md:text-sm font-bold text-gray-600 dark:text-gray-300 truncate">ไม่มีตารางเรียน</p><p class="text-[10px] text-gray-400 truncate">แตะตั้งค่าเพิ่มรายวิชา</p></div>`;
+                if(display) display.innerHTML = `<div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0 mr-3"><i data-lucide="coffee" class="w-5 h-5 text-blue-400"></i></div><div class="flex flex-col overflow-hidden"><p class="text-[13px] md:text-sm font-bold text-gray-600 dark:text-gray-300 truncate">ไม่มีตารางเรียน</p><p class="text-[10px] text-gray-400 truncate">แตะตั้งค่าเพิ่มรายวิชา</p></div>`;
+                if(dtList) dtList.innerHTML = `<div class="h-full flex flex-col items-center justify-center opacity-50"><i data-lucide="inbox" class="w-10 h-10 mb-2"></i><p class="text-sm font-semibold">ยังไม่มีข้อมูลวิชาเรียน</p></div>`;
                 lucide.createIcons(); return;
             }
             const now = new Date(), todayInt = now.getDay(), currentMins = now.getHours() * 60 + now.getMinutes();
             let upcoming = timetable.filter(c => parseInt(c.day) === todayInt && (parseInt(c.end.split(':')[0]) * 60 + parseInt(c.end.split(':')[1])) > currentMins);
             
             if(upcoming.length === 0) { 
-                display.innerHTML = `<div class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center shrink-0 mr-3"><i data-lucide="check" class="w-5 h-5 text-green-500"></i></div><div class="flex flex-col overflow-hidden"><p class="text-[13px] md:text-sm font-bold text-gray-600 dark:text-gray-300 truncate">หมดคาบเรียนแล้ว</p><p class="text-[10px] text-gray-400 truncate">พักผ่อนซะนะ!</p></div>`; lucide.createIcons(); return; 
+                if(display) display.innerHTML = `<div class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center shrink-0 mr-3"><i data-lucide="check" class="w-5 h-5 text-green-500"></i></div><div class="flex flex-col overflow-hidden"><p class="text-[13px] md:text-sm font-bold text-gray-600 dark:text-gray-300 truncate">หมดคาบเรียนแล้ว</p><p class="text-[10px] text-gray-400 truncate">พักผ่อนซะนะ!</p></div>`; 
+                if(dtList) dtList.innerHTML = `<div class="h-full flex flex-col items-center justify-center opacity-50 text-green-500 dark:text-green-400"><i data-lucide="check-circle-2" class="w-10 h-10 mb-2 mt-4"></i><p class="text-sm font-semibold">หมดคาบเรียนสำหรับวันนี้แล้ว เย้!</p></div>`;
+                lucide.createIcons(); return; 
             }
             
             upcoming.sort((a,b) => (parseInt(a.start.split(':')[0])*60 + parseInt(a.start.split(':')[1])) - (parseInt(b.start.split(':')[0])*60 + parseInt(b.start.split(':')[1])));
+            
+            // Mobile (Next class only)
             const nextClass = upcoming[0];
             const tStart = parseInt(nextClass.start.split(':')[0]) * 60 + parseInt(nextClass.start.split(':')[1]);
             const isHappening = currentMins >= tStart;
@@ -1000,27 +1022,89 @@
             const [ch, cm] = nextClass.start.split(':');
             const status = isHappening ? "กำลังเรียนอยู่" : (diff < 60 ? `เริ่มในอีก ${diff} นาที` : `${ch}:${cm} น.`);
             
-            display.innerHTML = `<div class="w-10 h-10 rounded-full bg-blue-500 dark:bg-blue-600 text-white font-bold flex flex-col items-center justify-center leading-none shrink-0 shadow-inner mr-3 relative"><span class="text-[13px] border-b border-white/20 pb-[1.5px] mb-[1px] w-[60%] text-center">${ch}</span><span class="text-[9px]">${cm}</span>${isHappening ? '<span class="absolute top-[1.5px] right-[1.5px] w-2 h-2 bg-green-400 border-[1.5px] border-white rounded-full animate-pulse shadow-sm"></span>' : ''}</div><div class="flex-1 flex flex-col overflow-hidden justify-center pr-2"><div class="flex items-center gap-1.5 w-full"><p class="font-bold text-[13px] md:text-[14px] text-gray-900 dark:text-white truncate">${nextClass.subject}</p></div><div class="flex items-center gap-1.5 mt-[2px] w-full"><span class="${isHappening?'bg-green-100 text-green-700':'bg-blue-100 text-blue-700'} dark:bg-white/10 dark:text-white text-[9px] px-1.5 py-[2px] rounded-sm font-bold shrink-0 leading-none whitespace-nowrap shadow-sm"><span class="w-1.5 h-1.5 inline-block rounded-full ${isHappening?'bg-green-500 animate-pulse':'bg-blue-500'} mr-0.5"></span> ${status}</span><p class="text-[10px] text-gray-500 dark:text-gray-400 flex items-center gap-1 truncate"><i data-lucide="map-pin" class="w-3 h-3 text-red-500 shrink-0"></i> ${nextClass.room}</p></div></div>`;
+            if(display) display.innerHTML = `<div class="w-10 h-10 rounded-full bg-blue-500 dark:bg-blue-600 text-white font-bold flex flex-col items-center justify-center leading-none shrink-0 shadow-inner mr-3 relative"><span class="text-[13px] border-b border-white/20 pb-[1.5px] mb-[1px] w-[60%] text-center">${ch}</span><span class="text-[9px]">${cm}</span>${isHappening ? '<span class="absolute top-[1.5px] right-[1.5px] w-2 h-2 bg-green-400 border-[1.5px] border-white rounded-full animate-pulse shadow-sm"></span>' : ''}</div><div class="flex-1 flex flex-col overflow-hidden justify-center pr-2"><div class="flex items-center gap-1.5 w-full"><p class="font-bold text-[13px] md:text-[14px] text-gray-900 dark:text-white truncate">${nextClass.subject}</p></div><div class="flex items-center gap-1.5 mt-[2px] w-full"><span class="${isHappening?'bg-green-100 text-green-700':'bg-blue-100 text-blue-700'} dark:bg-white/10 dark:text-white text-[9px] px-1.5 py-[2px] rounded-sm font-bold shrink-0 leading-none whitespace-nowrap shadow-sm"><span class="w-1.5 h-1.5 inline-block rounded-full ${isHappening?'bg-green-500 animate-pulse':'bg-blue-500'} mr-0.5"></span> ${status}</span><p class="text-[10px] text-gray-500 dark:text-gray-400 flex items-center gap-1 truncate"><i data-lucide="map-pin" class="w-3 h-3 text-red-500 shrink-0"></i> ${nextClass.room}</p></div></div>`;
+            
+            // Desktop (All upcoming classes)
+            if(dtList) {
+                dtList.innerHTML = upcoming.map((c, i) => {
+                    const cStart = parseInt(c.start.split(':')[0]) * 60 + parseInt(c.start.split(':')[1]);
+                    const isNow = currentMins >= cStart;
+                    const cDiff = cStart - currentMins;
+                    const cStatusText = isNow ? "กำลังเรียนอยู่" : (cDiff < 60 ? `เริ่มในอีก ${cDiff} นาที` : `คาบต่อไป`);
+                    
+                    return `<div class="bg-gray-50 dark:bg-black/20 rounded-[20px] p-4 flex items-center gap-4 relative overflow-hidden group hover:shadow-md transition-shadow cursor-pointer border border-transparent dark:border-white/5">
+                        ${isNow ? '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-green-500"></div>' : ''}
+                        <div class="w-14 h-14 rounded-2xl flex flex-col items-center justify-center shrink-0 ${isNow ? 'bg-green-500 text-white shadow-inner' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'} font-bold transition-transform group-hover:scale-105">
+                            <span class="text-base border-b ${isNow ? 'border-white/20' : 'border-blue-200 dark:border-blue-800/50'} pb-1 mb-0.5 w-[60%] text-center leading-none">${c.start.split(':')[0]}</span>
+                            <span class="text-xs leading-none">${c.start.split(':')[1]}</span>
+                        </div>
+                        <div class="flex-1 min-w-0 pr-2">
+                            <h4 class="font-extrabold text-[15px] text-gray-900 dark:text-white truncate mb-1">${c.subject}</h4>
+                            <div class="flex items-center gap-3 text-[11px] font-medium text-gray-500 dark:text-gray-400">
+                                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${c.start} - ${c.end} น.</span>
+                                <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-red-500"></i> ${c.room}</span>
+                            </div>
+                        </div>
+                        ${(isNow || i===0) ? `<div class="shrink-0 px-2.5 py-1 rounded-full text-[10px] font-bold ${isNow ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400'}"><span class="w-1.5 h-1.5 inline-block rounded-full ${isNow ? 'bg-green-500 animate-pulse' : 'bg-blue-500'} mr-1"></span>${cStatusText}</div>` : ''}
+                    </div>`;
+                }).join('');
+            }
+            
             lucide.createIcons();
         }
 
         let countdowns = JSON.parse(localStorage.getItem('nsru_countdowns')) || [];
         function updateCountdownUI() {
             const display = document.getElementById('countdown-display');
+            const dcList = document.getElementById('desktop-countdown-list');
+            
             if(countdowns.length === 0) {
-                display.innerHTML = `<div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center shrink-0 mr-3"><i data-lucide="party-popper" class="w-5 h-5 text-orange-500"></i></div><div class="flex flex-col overflow-hidden"><p class="text-[13px] md:text-sm font-bold text-gray-600 dark:text-gray-300 truncate">ไม่มีงานด่วน</p><p class="text-[10px] text-gray-400 truncate">แตะไอคอนเพื่อเพิ่มวันสำคัญ</p></div>`;
+                if(display) display.innerHTML = `<div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center shrink-0 mr-3"><i data-lucide="party-popper" class="w-5 h-5 text-orange-500"></i></div><div class="flex flex-col overflow-hidden"><p class="text-[13px] md:text-sm font-bold text-gray-600 dark:text-gray-300 truncate">ไม่มีงานด่วน</p><p class="text-[10px] text-gray-400 truncate">แตะไอคอนเพื่อเพิ่มวันสำคัญ</p></div>`;
+                if(dcList) dcList.innerHTML = `<div class="h-full flex flex-col items-center justify-center opacity-50"><i data-lucide="inbox" class="w-10 h-10 mb-2 mt-4"></i><p class="text-sm font-semibold">โล่งสบาย! ไม่มีงานด่วน</p></div>`;
                 lucide.createIcons(); return;
             }
             countdowns.sort((a,b) => new Date(a.date) - new Date(b.date));
             const nextEvent = countdowns.find(c => new Date(c.date) > new Date()) || countdowns[countdowns.length-1];
             const diff = new Date(nextEvent.date) - new Date();
+            
             if(diff <= 0) { 
-                display.innerHTML = `<div class="w-10 h-10 rounded-full bg-red-500 text-white font-bold flex items-center justify-center shrink-0 shadow-inner mr-3 relative"><i data-lucide="bell-ring" class="w-5 h-5 animate-bounce"></i><span class="absolute top-0 right-0 w-2.5 h-2.5 bg-yellow-400 border-2 border-red-500 rounded-full animate-ping"></span></div><div class="flex-1 flex flex-col overflow-hidden justify-center pr-2"><p class="font-bold text-[13px] md:text-[14px] text-gray-900 dark:text-white truncate">${nextEvent.title}</p><p class="text-[10px] text-red-600 dark:text-red-400 mt-[2px] font-bold truncate">ถึงเวลาแล้ว! (Time's Up!)</p></div>`; 
+                if(display) display.innerHTML = `<div class="w-10 h-10 rounded-full bg-red-500 text-white font-bold flex items-center justify-center shrink-0 shadow-inner mr-3 relative"><i data-lucide="bell-ring" class="w-5 h-5 animate-bounce"></i><span class="absolute top-0 right-0 w-2.5 h-2.5 bg-yellow-400 border-2 border-red-500 rounded-full animate-ping"></span></div><div class="flex-1 flex flex-col overflow-hidden justify-center pr-2"><p class="font-bold text-[13px] md:text-[14px] text-gray-900 dark:text-white truncate">${nextEvent.title}</p><p class="text-[10px] text-red-600 dark:text-red-400 mt-[2px] font-bold truncate">ถึงเวลาแล้ว! (Time's Up!)</p></div>`; 
+                if(dcList) dcList.innerHTML = countdowns.map(c => `
+                    <div class="bg-gray-50 dark:bg-black/20 border border-transparent dark:border-white/5 rounded-[20px] p-4 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0"><i data-lucide="bell-ring" class="w-5 h-5 animate-bounce"></i></div>
+                        <div class="flex-1 min-w-0 pr-2"><h4 class="font-extrabold text-[15px] truncate mb-0.5 text-gray-900 dark:text-white">${c.title}</h4><p class="text-[11px] font-bold text-red-500">ถึงเวลาแล้ว!</p></div>
+                    </div>`).join('');
                 lucide.createIcons(); return; 
             }
             
             const days = Math.floor(diff/(1000*60*60*24)), hours = Math.floor((diff/(1000*60*60))%24);
-            display.innerHTML = `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 text-white font-bold flex flex-col items-center justify-center shrink-0 shadow-inner mr-3 relative overflow-hidden"><div class="absolute inset-0 bg-white/10 w-full h-[50%]"></div><span class="text-[13px] tracking-tighter leading-none mt-1 z-10">${days}<span class="text-[8px] font-normal opacity-80 uppercase ml-[1px]">D</span></span><span class="text-[10px] tracking-tighter leading-none mb-1 z-10">${hours}<span class="text-[7px] font-normal opacity-80 uppercase ml-[1px]">H</span></span></div><div class="flex-1 flex flex-col overflow-hidden justify-center pr-2"><div class="flex items-center gap-1.5 w-full"><p class="font-bold text-[13px] md:text-[14px] text-gray-900 dark:text-white truncate" title="${nextEvent.title}">${nextEvent.title}</p></div><div class="flex items-center gap-1.5 mt-[2px] w-full"><span class="bg-orange-100 text-orange-700 dark:bg-white/10 dark:text-orange-300 text-[9px] px-1.5 py-[2px] rounded-sm font-bold shrink-0 leading-none shadow-sm"><i data-lucide="timer" class="w-2.5 h-2.5 inline-block -mt-[1px]"></i> นับถอยหลังอยู่...</span></div></div>`;
+            if(display) display.innerHTML = `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 text-white font-bold flex flex-col items-center justify-center shrink-0 shadow-inner mr-3 relative overflow-hidden"><div class="absolute inset-0 bg-white/10 w-full h-[50%]"></div><span class="text-[13px] tracking-tighter leading-none mt-1 z-10">${days}<span class="text-[8px] font-normal opacity-80 uppercase ml-[1px]">D</span></span><span class="text-[10px] tracking-tighter leading-none mb-1 z-10">${hours}<span class="text-[7px] font-normal opacity-80 uppercase ml-[1px]">H</span></span></div><div class="flex-1 flex flex-col overflow-hidden justify-center pr-2"><div class="flex items-center gap-1.5 w-full"><p class="font-bold text-[13px] md:text-[14px] text-gray-900 dark:text-white truncate" title="${nextEvent.title}">${nextEvent.title}</p></div><div class="flex items-center gap-1.5 mt-[2px] w-full"><span class="bg-orange-100 text-orange-700 dark:bg-white/10 dark:text-orange-300 text-[9px] px-1.5 py-[2px] rounded-sm font-bold shrink-0 leading-none shadow-sm"><i data-lucide="timer" class="w-2.5 h-2.5 inline-block -mt-[1px]"></i> นับถอยหลังอยู่...</span></div></div>`;
+            
+            if(dcList) {
+                dcList.innerHTML = countdowns.map(c => {
+                    const cd = new Date(c.date) - new Date();
+                    if(cd <= 0) return `<div class="bg-gray-50 dark:bg-black/20 border border-transparent dark:border-white/5 rounded-[20px] p-4 flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0"><i data-lucide="bell" class="w-5 h-5"></i></div><div class="flex-1 min-w-0 pr-2"><h4 class="font-extrabold text-[15px] truncate mb-0.5 text-gray-900 dark:text-white">${c.title}</h4><p class="text-[11px] font-bold text-red-500">ถึงเวลาแล้ว!</p></div></div>`;
+                    
+                    const cDays = Math.floor(cd/(1000*60*60*24));
+                    const cHours = Math.floor((cd/(1000*60*60))%24);
+                    const isUrgent = cDays <= 3;
+                    
+                    return `<div class="bg-gray-50 dark:bg-black/20 border border-transparent dark:border-white/5 rounded-[20px] p-4 flex items-center gap-4 group hover:shadow-md transition-shadow cursor-pointer">
+                        <div class="bg-white dark:bg-[#2c2c2e] border border-gray-100 dark:border-white/5 rounded-2xl p-2 w-16 shrink-0 flex flex-col items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-transform group-hover:scale-105">
+                            <span class="text-xl font-extrabold tracking-tighter leading-none ${isUrgent ? 'text-red-500 dark:text-red-400' : 'text-gray-900 dark:text-white'} mb-0.5">${cDays}</span>
+                            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Days</span>
+                        </div>
+                        <div class="flex-1 min-w-0 pr-2">
+                            <h4 class="font-extrabold text-[15px] truncate mb-1 text-gray-900 dark:text-white">${c.title}</h4>
+                            <div class="flex items-center gap-2 text-[11px] font-medium text-gray-500 dark:text-gray-400">
+                                <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${new Date(c.date).toLocaleDateString(currentLang==='th'?'th-TH':'en-US', {month:'short', day:'numeric'})}</span>
+                                <span>&bull;</span>
+                                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> อีก ${cHours} ชม.</span>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
             lucide.createIcons();
         }
 
@@ -1092,9 +1176,76 @@
         }
         function delCountdown(idx) { countdowns.splice(idx, 1); localStorage.setItem('nsru_countdowns', JSON.stringify(countdowns)); renderCountdownForm(); updateCountdownUI(); }
 
+        // 7b. Bottom Nav Badge & Context-Aware Updates
+        function updateBottomNavBadges() {
+            // Schedule Badge: show today's remaining class count
+            const scheduleBadge = document.getElementById('schedule-badge');
+            if(scheduleBadge) {
+                const now = new Date(), todayInt = now.getDay(), currentMins = now.getHours() * 60 + now.getMinutes();
+                const todayClasses = timetable.filter(c => parseInt(c.day) === todayInt && (parseInt(c.end.split(':')[0]) * 60 + parseInt(c.end.split(':')[1])) > currentMins);
+                if(todayClasses.length > 0) {
+                    scheduleBadge.textContent = todayClasses.length;
+                    scheduleBadge.classList.add('active');
+                } else {
+                    scheduleBadge.classList.remove('active');
+                }
+            }
+
+            // Alerts Badge Dot: show if any countdown is within 3 days
+            const alertsDot = document.getElementById('alerts-badge-dot');
+            if(alertsDot) {
+                const hasUrgent = countdowns.some(c => {
+                    const diff = new Date(c.date) - new Date();
+                    return diff > 0 && diff <= 3 * 24 * 60 * 60 * 1000;
+                });
+                const hasExpired = countdowns.some(c => new Date(c.date) <= new Date());
+                if(hasUrgent || hasExpired) {
+                    alertsDot.classList.add('active');
+                } else {
+                    alertsDot.classList.remove('active');
+                }
+            }
+
+            // Context-Aware Nova AI Center Button
+            const novaIcon = document.getElementById('nova-fab-icon');
+            const novaLabel = document.getElementById('nova-fab-label');
+            const novaFab = document.getElementById('nova-fab');
+            if(novaIcon && novaLabel && novaFab) {
+                const now = new Date(), todayInt = now.getDay(), currentMins = now.getHours() * 60 + now.getMinutes();
+                const soonClass = timetable.find(c => {
+                    if(parseInt(c.day) !== todayInt) return false;
+                    const startMins = parseInt(c.start.split(':')[0]) * 60 + parseInt(c.start.split(':')[1]);
+                    const endMins = parseInt(c.end.split(':')[0]) * 60 + parseInt(c.end.split(':')[1]);
+                    return startMins - currentMins > 0 && startMins - currentMins <= 30;
+                });
+                const inClass = timetable.find(c => {
+                    if(parseInt(c.day) !== todayInt) return false;
+                    const startMins = parseInt(c.start.split(':')[0]) * 60 + parseInt(c.start.split(':')[1]);
+                    const endMins = parseInt(c.end.split(':')[0]) * 60 + parseInt(c.end.split(':')[1]);
+                    return currentMins >= startMins && currentMins < endMins;
+                });
+
+                if(inClass) {
+                    novaIcon.setAttribute('data-lucide', 'book-open');
+                    novaLabel.textContent = inClass.subject.substring(0, 8);
+                    novaFab.classList.remove('nova-pulse');
+                } else if(soonClass) {
+                    novaIcon.setAttribute('data-lucide', 'alarm-clock');
+                    const startMins = parseInt(soonClass.start.split(':')[0]) * 60 + parseInt(soonClass.start.split(':')[1]);
+                    novaLabel.textContent = `${startMins - currentMins} นาที`;
+                    novaFab.classList.add('nova-pulse');
+                } else {
+                    novaIcon.setAttribute('data-lucide', 'sparkles');
+                    novaLabel.textContent = 'Nova AI';
+                    novaFab.classList.add('nova-pulse');
+                }
+                lucide.createIcons();
+            }
+        }
+
         // Start Intervals
-        updateTimetableUI(); updateCountdownUI();
-        setInterval(() => { updateTimetableUI(); updateCountdownUI(); }, 60000);
+        updateTimetableUI(); updateCountdownUI(); updateBottomNavBadges();
+        setInterval(() => { updateTimetableUI(); updateCountdownUI(); updateBottomNavBadges(); }, 60000);
 
         // 8. Chatbot Setup
         let isChatOpen = false;
