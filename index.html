@@ -268,6 +268,7 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
 
+        * { -webkit-overflow-scrolling: touch !important; }
         .tilt-card { transform-style: preserve-3d; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease; will-change: transform; -webkit-tap-highlight-color: transparent; }
         .tilt-card:active { transform: scale(0.95) !important; transition: transform 0.15s ease-out; }
         
@@ -322,10 +323,54 @@
             box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
         }
         .dark .nav-badge-dot { border-color: #1c1c1e; }
-        .nav-badge-dot.active { display: block; animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.3); }
+        /* --- Dynamic Weather Themes --- */
+        .weather-theme-sunny {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 30%, rgba(56, 189, 248, 0.1) 100%) !important;
+        }
+        .dark .weather-theme-sunny {
+            background: linear-gradient(135deg, #321c08 0%, #0a0a09 100%) !important;
+        }
+
+        .weather-theme-rainy {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #b1bb9d 100%) !important;
+        }
+        .dark .weather-theme-rainy {
+            background: linear-gradient(135deg, #082f49 0%, #030712 100%) !important;
+        }
+
+        .weather-theme-cloudy {
+            background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 50%, #e2e8f0 100%) !important;
+        }
+        .dark .weather-theme-cloudy {
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%) !important;
+        }
+
+        /* Particle Overlay Animations */
+        .rain-drop {
+            position: absolute;
+            width: 1.5px;
+            height: 15px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(125,211,252,0.8));
+            opacity: 0.8;
+            animation: rainFall linear infinite;
+        }
+        .dark .rain-drop {
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(56,189,248,0.5));
+        }
+        @keyframes rainFall {
+            0% { transform: translateY(-20px) rotate(12deg); }
+            100% { transform: translateY(100vh) rotate(12deg); }
+        }
+
+        .sun-ray {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(253,224,71,0.2) 0%, rgba(252,211,77,0) 75%);
+            animation: floatGlow 8s ease-in-out infinite alternate;
+        }
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+            100% { transform: translate(50px, -30px) scale(1.3); opacity: 0.7; }
         }
 
         body.modal-open { overflow: hidden; }
@@ -460,7 +505,37 @@
     </aside>
 
     <!-- Main Content Area -->
-    <main class="flex-1 flex flex-col h-full bg-apple-light dark:bg-apple-dark transition-colors overflow-hidden relative">
+    <main id="main-content" class="flex-1 flex flex-col h-full bg-apple-light dark:bg-apple-dark transition-all duration-1000 overflow-hidden relative">
+        
+        <!-- Dynamic Weather Background & Particles -->
+        <div id="weather-bg" class="absolute inset-0 z-0 transition-all duration-1000"></div>
+        <div id="weather-effects" class="absolute inset-0 pointer-events-none z-10 overflow-hidden"></div>
+        
+        <!-- Notification Tray Panel -->
+        <div id="notification-tray" class="fixed top-0 left-0 right-0 z-[60] transform -translate-y-full transition-transform duration-500 ease-spring bg-white/95 dark:bg-[#1c1c1e]/95 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.15)] flex flex-col max-h-[70vh] rounded-b-[32px] overflow-hidden">
+            <div class="px-6 pt-5 pb-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                        <i data-lucide="bell" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">ศูนย์แจ้งเตือน (Notifications)</h3>
+                </div>
+                <button onclick="toggleNotificationTray(false)" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:text-gray-700 dark:hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4 md:p-5 flex flex-col gap-3 hide-scrollbar" id="notification-list">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="p-4 border-t border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-black/20 text-center">
+                <button class="text-xs font-bold text-blue-600 dark:text-blue-400" onclick="markAllNotificationsRead()">อ่านทั้งหมด (Mark all as read)</button>
+            </div>
+        </div>
+
+        <!-- Notification Tray Backdrop -->
+        <div id="notification-backdrop" class="fixed inset-0 bg-black/40 opacity-0 pointer-events-none transition-opacity duration-400 z-[55]" onclick="toggleNotificationTray(false)"></div>
         
         <!-- Mobile Header -->
         <header class="md:hidden h-16 bg-white/80 dark:bg-apple-cardDark/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-apple-borderDark/50 flex items-center justify-between px-6 z-30 flex-shrink-0 sticky top-0 shadow-sm">
@@ -469,6 +544,10 @@
                 <h1 class="text-xl font-bold tracking-tight">NSRU<span class="ai-gradient-text ml-1">Portal</span></h1>
             </div>
             <div class="flex flex-row space-x-3">
+                <button onclick="toggleNotificationTray(true)" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-gray-300 active:scale-90 transition-transform relative">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span id="header-badge-dot" class="absolute top-[11px] right-[11px] w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                </button>
                 <button class="lang-toggle-btn w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold text-sm active:scale-90 transition-transform">
                     <span class="lang-indicator-text">EN</span>
                 </button>
@@ -480,7 +559,7 @@
         </header>
 
         <!-- Scrollable Content -->
-        <div class="flex-1 overflow-y-auto w-full px-5 py-6 md:p-10 lg:p-12 pb-[120px] md:pb-24 hide-scrollbar">
+        <div class="flex-1 overflow-y-auto w-full px-5 py-6 md:p-10 lg:p-12 pb-[120px] md:pb-24 hide-scrollbar relative z-20">
             <div class="max-w-5xl mx-auto">
                 
                 <div class="mb-6 md:mb-8 animate-stagger" style="animation-delay: 50ms;">
@@ -1124,16 +1203,34 @@
         function renderFullAlerts() {
             const list = document.getElementById('full-alerts-list');
             if(!list) return;
-            if(countdowns.length === 0) {
+
+            if(typeof notificationData === 'undefined' || notificationData.length === 0) {
                 list.innerHTML = `<div class="py-12 text-center text-gray-400"><i data-lucide="bell-off" class="w-10 h-10 mx-auto mb-2 opacity-50"></i><p class="text-sm">ไม่มีรายการแจ้งเตือนในขณะนี้</p></div>`;
-            } else {
-                list.innerHTML = countdowns.map(c => `
-                    <div class="bg-white dark:bg-apple-cardDark p-4 rounded-2xl border border-gray-100 dark:border-white/5 flex items-center justify-between">
-                        <div><h4 class="font-bold text-gray-900 dark:text-white">${c.title}</h4><p class="text-xs text-gray-400">${new Date(c.date).toLocaleString('th-TH')}</p></div>
-                        <span class="text-xs font-bold text-orange-500 bg-orange-50 dark:bg-orange-900/20 px-2.5 py-1 rounded-full"><i data-lucide="hourglass" class="w-3 h-3 inline"></i> ไถ่ถอน</span>
-                    </div>
-                `).join('');
+                return;
             }
+
+            list.innerHTML = notificationData.map(n => {
+                let icon = 'info', iconBg = 'bg-blue-50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400';
+                if(n.type === 'important') { icon = 'alert-circle'; iconBg = 'bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400'; }
+                else if(n.type === 'warning') { icon = 'alert-triangle'; iconBg = 'bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400'; }
+
+                return `
+                    <div class="p-3.5 rounded-2xl bg-white dark:bg-apple-cardDark border border-gray-100 dark:border-white/5 flex gap-3 items-start relative hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-300 cursor-pointer ${!n.isRead ? 'border-l-[4px] border-l-blue-500 shadow-md' : 'shadow-sm'}">
+                        <div class="w-10 h-10 rounded-2xl ${iconBg} flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="${icon}" class="w-5 h-5"></i>
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <div class="flex items-center justify-between mb-0.5">
+                                <h4 class="text-sm font-bold text-gray-900 dark:text-white">${n.title}</h4>
+                                <span class="text-[10px] text-gray-400 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${n.time}</span>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed mb-1">${n.desc}</p>
+                        </div>
+                        ${!n.isRead ? '<span class="absolute top-4 right-4 w-2 h-2 bg-blue-600 rounded-full"></span>' : ''}
+                    </div>
+                `;
+            }).join('');
+
             lucide.createIcons();
         }
 
@@ -1170,6 +1267,10 @@
                     pill.classList.replace('opacity-0', 'opacity-100');
                     pill.setAttribute('onclick', 'openWeatherModal()');
                 }
+
+                // --- Trigger Dynamic Background Theme ---
+                applyWeatherTheme(icon);
+
             } catch(e) {
                 console.log('Weather API unvailable:', e);
                 const pill = document.getElementById('weather-pill');
@@ -1177,6 +1278,49 @@
             }
         }
         window.addEventListener('DOMContentLoaded', fetchWeather);
+
+        function applyWeatherTheme(icon) {
+            const bg = document.getElementById('weather-bg');
+            const effects = document.getElementById('weather-effects');
+            const mainContent = document.getElementById('main-content');
+            if(!bg || !effects) return;
+
+            // Clear previous effects
+            effects.innerHTML = '';
+            bg.className = "absolute inset-0 z-0 transition-all duration-1000"; // Reset classes
+
+            let themeClass = 'weather-theme-cloudy'; // Default
+            if (icon === '☀️') themeClass = 'weather-theme-sunny';
+            else if (icon === '🌧️' || icon === '⛈️') themeClass = 'weather-theme-rainy';
+
+            bg.classList.add(themeClass);
+
+            // Generate Particle Effects
+            if (icon === '🌧️' || icon === '⛈️') {
+                // Rain
+                for(let i=0; i<40; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'rain-drop';
+                    drop.style.left = Math.random() * 100 + 'vw';
+                    drop.style.animationDuration = (0.5 + Math.random() * 0.5) + 's';
+                    drop.style.animationDelay = Math.random() * 2 + 's';
+                    effects.appendChild(drop);
+                }
+            } else if (icon === '☀️') {
+                // Sun Rays / Lens Flares
+                for(let i=0; i<3; i++) {
+                    const ray = document.createElement('div');
+                    ray.className = 'sun-ray';
+                    const size = 150 + Math.random() * 100;
+                    ray.style.width = size + 'px';
+                    ray.style.height = size + 'px';
+                    ray.style.top = Math.random() * 30 + '%';
+                    ray.style.left = Math.random() * 80 + '%';
+                    ray.style.animationDelay = (i * 2) + 's';
+                    effects.appendChild(ray);
+                }
+            }
+        }
 
         function openWeatherModal() {
             if(!weatherDetails) return;
@@ -1544,6 +1688,80 @@
                 lucide.createIcons(); box.scrollTop = box.scrollHeight;
             }, 800);
         }
+
+        // --- Notification Tray Logic ---
+        let notificationData = [
+            { id: 1, title: 'กำหนดการชำระเงินค่าเทอม', desc: 'แจ้งกำหนดการชำระเงินค่าลงทะเบียนเรียนภาคเรียนที่ 2/2569 ขยายเวลาถึง 31 มี.ค.', time: '10 นาทีที่แล้ว', isRead: false, type: 'important' },
+            { id: 2, title: 'ประกาศผลสอบกลางภาคออกแล้ว', desc: 'วิชา 001103 วิธีการวิจัยเบื้องต้น สามารถตรวจสอบผ่านระบบ Regis ได้แล้ววันนี้', time: '1 ชั่วโมงที่แล้ว', isRead: false, type: 'info' },
+            { id: 3, title: 'แจ้งเตือนคลาสเรียน', desc: 'อาจารย์ประกาศงดคลาสบ่ายวิชา 022410 คอมพิวเตอร์เน็ตเวิร์ก', time: 'เมื่อวานนี้', isRead: true, type: 'warning' }
+        ];
+
+        function toggleNotificationTray(isOpen) {
+            const tray = document.getElementById('notification-tray');
+            const backdrop = document.getElementById('notification-backdrop');
+            if(!tray || !backdrop) return;
+
+            if (isOpen) {
+                tray.classList.replace('-translate-y-full', 'translate-y-0');
+                backdrop.classList.replace('opacity-0', 'opacity-100');
+                backdrop.classList.remove('pointer-events-none');
+                renderNotificationList();
+            } else {
+                tray.classList.replace('translate-y-0', '-translate-y-full');
+                backdrop.classList.replace('opacity-100', 'opacity-0');
+                backdrop.classList.add('pointer-events-none');
+            }
+        }
+
+        function renderNotificationList() {
+            const list = document.getElementById('notification-list');
+            if(!list) return;
+
+            if(notificationData.length === 0) {
+                list.innerHTML = `<div class="py-12 text-center text-gray-400"><i data-lucide="bell-off" class="w-10 h-10 mx-auto mb-2 opacity-50"></i><p class="text-xs">ไม่มีรายการแจ้งเตือน</p></div>`;
+                const badge = document.getElementById('header-badge-dot');
+                if(badge) badge.style.display = 'none';
+                return;
+            }
+
+            list.innerHTML = notificationData.map(n => {
+                let icon = 'info', iconBg = 'bg-blue-50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400';
+                if(n.type === 'important') { icon = 'alert-circle'; iconBg = 'bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400'; }
+                else if(n.type === 'warning') { icon = 'alert-triangle'; iconBg = 'bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400'; }
+
+                return `
+                    <div class="p-3.5 rounded-2xl bg-white dark:bg-apple-cardDark border border-gray-100 dark:border-white/5 flex gap-3 items-start relative hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer ${!n.isRead ? 'border-l-[3px] border-l-blue-500' : ''}">
+                        <div class="w-9 h-9 rounded-xl ${iconBg} flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="${icon}" class="w-4 h-4"></i>
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <h4 class="text-[13px] font-bold text-gray-900 dark:text-white mb-0.5">${n.title}</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed mb-1">${n.desc}</p>
+                            <span class="text-[10px] text-gray-400 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${n.time}</span>
+                        </div>
+                        ${!n.isRead ? '<span class="absolute top-4 right-4 w-2 h-2 bg-blue-600 rounded-full"></span>' : ''}
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+            updateHeaderBadge();
+        }
+
+        function markAllNotificationsRead() {
+            notificationData.forEach(n => n.isRead = true);
+            renderNotificationList();
+            updateHeaderBadge();
+        }
+
+        function updateHeaderBadge() {
+            const hasUnread = notificationData.some(n => !n.isRead);
+            const badge = document.getElementById('header-badge-dot');
+            if(badge) badge.style.display = hasUnread ? 'block' : 'none';
+        }
+
+        // Init Tray Count on Load
+        window.addEventListener('DOMContentLoaded', () => { setTimeout(updateHeaderBadge, 1000); });
     </script>
 </body>
 </html>
