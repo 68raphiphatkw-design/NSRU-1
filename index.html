@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+    
+    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NSRU Portal">
+    <link rel="apple-touch-icon" href="./logo.png?v=5">
+    <link rel="icon" type="image/png" href="./logo.png?v=5">
+    
+    <title>NSRU Portal | Minimal AI Edition</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'Prompt', 'sans-serif'] },
+                    colors: { apple: { light: '#f5f5f7', dark: '#000000', cardDark: '#1c1c1e', borderDark: '#38383a' } },
+                    animation: { 'float': 'float 6s ease-in-out infinite' },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- I18N DICTIONARY ---
+        const translations = {
+            en: {
+                greeting_morning: "Good morning ⛅",
+                greeting_afternoon: "Good afternoon ☀️",
+                greeting_evening: "Good evening 🌙",
+                nav_dashboard: "Dashboard",
+                nav_regis: "Regis",
+                nav_dorm: "Dormitory",
+                nav_sd: "Student Dev",
+                btn_dark_mode: "Dark Mode",
+                btn_light_mode: "Light Mode",
+                lang_toggle: "English",
+                
+                heading_regis: "Regis",
+                desc_regis: "Central system for academic registration, grade checking, payment slips, and class schedules.",
+                btn_enter: "Access System",
+                
+                heading_sd: "Student Dev",
+                desc_sd: "Activity Transcripts, scholarships, and student loan management.",
+                
+                heading_dorm: "Dormitory",
+                desc_dorm: "Dormitory management system, maintenance requests, and payment history.",
+                
+                heading_elearning: "E-Learning",
+                desc_elearning: "Online learning platform, lecture slides, assignments, and exams.",
+                
+                heading_noc: "NOC Services",
+                desc_noc: "Information Technology Center. WiFi access, .nsru emails, and genuine software.",
+                
+                heading_calendar: "Calendar",
+                desc_calendar: "Detailed academic calendar, public holidays, and university exam schedules.",
+                
+                heading_about: "About Portal",
+                desc_about: "Designed to reduce fragmentation by combining all student websites into one easy platform.",
+                btn_read_more: "Read More",
+                
+                footer_title: "NSRU Portal Space",
+                footer_desc: "Created for students of Nakhon Sawan Rajabhat University<br>Bringing all educational platforms into a single app.",
+                
+                modal_why: "Why is this important?",
+                modal_cancel: "Cancel",
+                modal_continue: "Continue to System",
+                
+                modal_regis_title: "Academic Registration (Regis)",
+                modal_regis_desc: "Central hub for course registration, grade checking, and managing schedules.",
+                modal_regis_imp: "Crucial for generating tuition payment slips and registering for classes every semester.",
+                
+                modal_sd_title: "Student Development (SD)",
+                modal_sd_desc: "Activity Hub, Scholarships, and Student Loans.",
+                modal_sd_imp: "Activity Transcripts are mandatory for graduation approval.",
+                
+                modal_dorm_title: "Dormitory System",
+                modal_dorm_desc: "University Dormitory Management System.",
+                modal_dorm_imp: "Used to confirm booking rights, pay fees, and report maintenance issues.",
+                
+                modal_elearning_title: "E-Learning (LMS)",
+                modal_elearning_desc: "Online Learning Management System.",
+                modal_elearning_imp: "Used to download slides, submit work, and take minor exams with professors.",
+                
+                modal_noc_title: "NOC IT Services",
+                modal_noc_desc: "Technology Center for Network and Email.",
+                modal_noc_imp: "Request university internet privileges, .nsru emails, and genuine software.",
+                
+                modal_calendar_title: "Academic Calendar",
+                modal_calendar_desc: "Academic Calendar and Examination Schedules.",
+                modal_calendar_imp: "Check important dates for registration, add/drop periods, and exams to plan your academic life.",
+                
+                modal_about_title: "About NSRU Portal",
+                modal_about_desc: "Developed as a Super App to make all university systems easier for students.",
+                modal_about_imp: "Designed for the student lifestyle, mobile-friendly, and simplified connections.",
+
+                // Chatbot System
+                chat_title: "AI Assistant",
+                chat_status: "Online",
+                chat_greeting: "Hello! Try asking me a question below:",
+                chat_q1: "What is this app?",
+                chat_a1: "NSRU Portal is a Super App that bundles all essential university websites into one dashboard. It is fast, mobile-friendly, and simple to use.",
+                chat_q2: "Who made this?",
+                chat_a2: "It was built for university students to solve the problem of dealing with so many different scattered university systems.",
+                chat_q3: "How to use this?",
+                chat_a3: "Simply tap any widget on the dashboard! You can also click the top-right buttons on your phone to switch between Dark Mode and Languages."
+            },
+            th: {
+                greeting_morning: "สวัสดีตอนเช้าครับ ⛅",
+                greeting_afternoon: "สวัสดียามบ่ายครับ ☀️",
+                greeting_evening: "สวัสดีตอนเย็นครับ 🌙",
+                nav_dashboard: "หน้าหลัก",
+                nav_regis: "ลงทะเบียนเรียน",
+                nav_dorm: "หอพัก",
+                nav_sd: "พัฒนานักศึกษา",
+                btn_dark_mode: "โหมดมืด",
+                btn_light_mode: "โหมดสว่าง",
+                lang_toggle: "ภาษาไทย",
+                
+                heading_regis: "Regis",
+                desc_regis: "ระบบส่วนกลางสำหรับลงทะเบียนเรียน ตรวจสอบผลการเรียน พิมพ์ใบแจ้งชำระเงิน และจัดการตารางเรียน",
+                btn_enter: "เข้าสู่ระบบ",
+                
+                heading_sd: "Student Dev",
+                desc_sd: "ข้อมูลสะสมหน่วยกิตกิจกรรม (ทรานสคริปต์กิจกรรม) งานทุนการศึกษา กู้ยืม กยศ. และสวัสดิการต่างๆ",
+                
+                heading_dorm: "Dormitory",
+                desc_dorm: "ระบบจัดการหอพักภายในมหาวิทยาลัย แจ้งซ่อมบำรุง และตรวจสอบประวัติชำระค่าธรรมเนียมหอพัก",
+                
+                heading_elearning: "E-Learning",
+                desc_elearning: "แพลตฟอร์มเข้าเรียนออนไลน์ ดาวน์โหลดสไลด์ ส่งการบ้านอาจารย์ และทำข้อสอบชิป",
+                
+                heading_noc: "NOC Services",
+                desc_noc: "ศูนย์เทคโนโลยีสารสนเทศ ขอบริการอินเทอร์เน็ต WiFi สร้างบัญชีอีเมล .nsru และโหลดซอฟต์แวร์",
+                
+                heading_calendar: "Calendar",
+                desc_calendar: "เช็คปฏิทินแบบละเอียด วันหยุดราชการ และอัปเดตกำหนดการสอบของมหาวิทยาลัย",
+                
+                heading_about: "About Portal",
+                desc_about: "จุดประสงค์เพื่อลดความกระจัดกระจาย โดยรวมทุกเว็บไซต์มารวมไว้ให้จิ้มจบในพื้นที่เดียว",
+                btn_read_more: "อ่านเพิ่มเติม",
+                
+                footer_title: "NSRU Portal Space",
+                footer_desc: "จัดทำขึ้นเพื่อนักศึกษามหาวิทยาลัยราชภัฏนครสวรรค์<br>รวบรวมทุกแพลตฟอร์มการศึกษาไว้ในแอปเดียว",
+                
+                modal_why: "ทำไมถึงสำคัญ?",
+                modal_cancel: "ยกเลิก",
+                modal_continue: "ไปยังหน้าระบบ",
+                
+                modal_regis_title: "ระบบบริการการศึกษา (Regis)",
+                modal_regis_desc: "ระบบศูนย์กลางเพื่อการลงทะเบียนเรียน ตรวจสอบผลการเรียน และจัดการตารางเรียนของคุณ",
+                modal_regis_imp: "สำคัญมาก: ใช้แจ้งชำระเงินค่าเทอมและลงทะเบียนเรียนทุกภาคการศึกษา",
+                
+                modal_sd_title: "กองพัฒนานักศึกษา (SD)",
+                modal_sd_desc: "ข้อมูลกิจกรรม ทุนการศึกษา และกู้ยืม กยศ.",
+                modal_sd_imp: "ทรานสคริปต์กิจกรรมเป็นสิ่งจำเป็นที่ใช้ยื่นขอจบการศึกษา",
+                
+                modal_dorm_title: "หอพักนักศึกษา (Dormitory)",
+                modal_dorm_desc: "ระบบบริหารจัดการหอพักนักศึกษาภายในมหาวิทยาลัย",
+                modal_dorm_imp: "ใช้เพื่อยืนยันสิทธิ์การเข้าพัก ชำระเงิน และแจ้งปัญหางานซ่อมต่างๆ",
+                
+                modal_elearning_title: "E-Learning (LMS)",
+                modal_elearning_desc: "ระบบจัดการเรียนการสอนออนไลน์",
+                modal_elearning_imp: "ใช้เพื่อดาวน์โหลดสไลด์ ส่งผลงาน และทำการสอบย่อยกับอาจารย์",
+                
+                modal_noc_title: "NOC Services",
+                modal_noc_desc: "ศูนย์เทคโนโลยี ดูแลเน็ตและอีเมล",
+                modal_noc_imp: "ขอสิทธิ์ใช้อินเทอร์เน็ตมหาวิทยาลัย และอีเมล .nsru เพื่อโหลดซอฟต์แวร์แท้",
+                
+                modal_calendar_title: "Academic Calendar",
+                modal_calendar_desc: "ปฏิทินวิชาการและกำหนดการสอบ",
+                modal_calendar_imp: "เช็ควันเวลาสำคัญในการลงทะเบียน เพิ่ม/ถอน และสอบไล่เพื่อวางแผนชีวิต",
+                
+                modal_about_title: "About NSRU Portal",
+                modal_about_desc: "เว็บไซต์นี้พัฒนาเพื่อเป็น Super App ให้นักศึกษาใช้ระบบทั้งหมดของมหาลัยได้ง่ายขึ้น",
+                modal_about_imp: "ออกแบบให้เข้ากับไลฟ์สไตล์นักศึกษา รองรับทุกมือถือและเชื่อมต่อได้ง่ายขึ้น",
+
+                // Chatbot System
+                chat_title: "ผู้ช่วย AI (อัตโนมัติ)",
+                chat_status: "พร้อมให้บริการ",
+                chat_greeting: "สวัสดีครับ! ลองเลือกคำถามด้านล่างเพื่อคุยกับผมได้เลยครับ:",
+                chat_q1: "แอปนี้คืออะไร?",
+                chat_a1: "NSRU Portal คือ Super App ที่นำระบบสำคัญต่างๆ ของมหาวิทยาลัยมารวมไว้ในหน้าต่างเดียว เพื่อช่วยให้นักศึกษาเข้าถึงได้รวดเร็วและเป็นระเบียบสุดๆ ครับ",
+                chat_q2: "ใครเป็นคนสร้าง?",
+                chat_a2: "แอปนี้ออกแบบและสร้างขึ้นมาเพื่อแก้ปัญหาระบบที่กระจัดกระจาย โดยเน้นดีไซน์มือถือแบบ Apple-style เพื่อตอบสนองความต้องการของนักศึกษาโดยเฉพาะครับ",
+                chat_q3: "ใช้งานแอพนี่อย่างไร?",
+                chat_a3: "เพียงแค่แตะไปที่การ์ดเมนูที่คุณต้องการ ระบบก็จะพาคุณตรงดิ่งไปที่เว็บไซต์นั้นทันที! อย่าลืมลองเมนูสลับภาษาหรือโหมดมืดที่มุมจอนะครับ"
+            }
+        };
+    </script>
+
+    <style>
+        body { background-color: theme('colors.apple.light'); transition: background-color 0.4s ease, color 0.4s ease; -webkit-font-smoothing: antialiased; }
+        .dark body { background-color: theme('colors.apple.dark'); color: #f5f5f7; }
+
+        .ai-gradient-text {
+            background: linear-gradient(110deg, #43CBFF 0%, #9708CC 30%, #FF6B00 70%, #43CBFF 100%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: gradient-shine 4s linear infinite;
+        }
+
+        @keyframes gradient-shine { to { background-position: 200% center; } }
+        .ai-gradient-bg { background: linear-gradient(110deg, #43CBFF 0%, #9708CC 30%, #FF6B00 70%, #43CBFF 100%); background-size: 200% auto; animation: gradient-shine 4s linear infinite; }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+
+        .tilt-card { transform-style: preserve-3d; transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease; will-change: transform; -webkit-tap-highlight-color: transparent; }
+        @media (max-width: 768px) { .tilt-card:active { transform: scale(0.94) !important; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); } }
+        
+        @keyframes slideUpFade { 0% { opacity: 0; transform: translateY(24px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .animate-stagger { opacity: 0; animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        .chat-slide-up { animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        .ai-orb-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 40; display: flex; align-items: center; gap: 1rem; flex-direction: row-reverse; }
+        .ai-orb { width: 3.5rem; height: 3.5rem; border-radius: 50%; cursor: pointer; box-shadow: 0 8px 32px rgba(151, 8, 204, 0.4); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .ai-orb::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; background: inherit; filter: blur(12px); opacity: 0.6; z-index: -1; }
+        .ai-orb:hover { transform: scale(1.15); }
+        .ai-orb:active { transform: scale(0.95); }
+
+        body.modal-open { overflow: hidden; }
+        html { visibility: hidden; }
+        html.loaded { visibility: visible; }
+    </style>
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { document.documentElement.classList.add('dark'); } 
+        else { document.documentElement.classList.remove('dark'); }
+        window.addEventListener('DOMContentLoaded', () => document.documentElement.classList.add('loaded'));
+        setTimeout(() => document.documentElement.classList.add('loaded'), 1000);
+    </script>
+</head>
+<body class="h-[100dvh] w-screen overflow-hidden flex font-sans text-gray-900 dark:text-gray-100 relative">
+
+    <!-- Interactive AI Orb (Visible on Mobile & PC) -->
+    <div class="ai-orb-container flex">
+        <div class="ai-orb ai-gradient-bg animate-float flex flex-col items-center justify-center text-white" onclick="toggleChatbot()">
+            <i data-lucide="sparkles" class="w-6 h-6"></i>
+        </div>
+    </div>
+
+    <!-- Chatbot Window -->
+    <div id="chatbot-window" class="fixed bottom-[100px] right-5 w-[calc(100vw-40px)] md:bottom-[100px] md:right-8 md:w-[350px] bg-white dark:bg-[#1c1c1e] rounded-3xl shadow-2xl border border-gray-200 dark:border-white/10 flex flex-col overflow-hidden z-50 transform scale-95 opacity-0 pointer-events-none transition-all duration-300 origin-bottom-right">
+        <!-- Header -->
+        <div class="ai-gradient-bg p-4 flex items-center justify-between text-white shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
+                    <i data-lucide="bot" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm tracking-tight" data-i18n="chat_title">AI Assistant</h3>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="w-2 h-2 rounded-full bg-green-400 border border-white/20 animate-pulse"></span>
+                        <span class="text-[10px] text-white/90 font-medium" data-i18n="chat_status">Online</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="toggleChatbot()" class="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded-full transition-colors active:scale-90">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <!-- Chat Content Area -->
+        <div class="p-4 flex-1 h-[260px] md:h-[300px] overflow-y-auto bg-gray-50 dark:bg-black/20 flex flex-col gap-3 scroll-smooth" id="chat-messages">
+            <!-- Initial Greeting -->
+            <div class="flex gap-2 w-max max-w-[85%] mt-1">
+                <div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+                </div>
+                <div class="bg-white dark:bg-white/10 border border-gray-100 dark:border-white/5 p-3 rounded-2xl rounded-tl-sm text-[13px] text-gray-800 dark:text-gray-200 shadow-sm leading-relaxed" data-i18n="chat_greeting">
+                    Hello! Try asking me a question below:
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Options -->
+        <div class="p-3 bg-white dark:bg-apple-cardDark border-t border-gray-100 dark:border-white/5 flex flex-col gap-2 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] relative">
+            <button class="chat-option-btn text-left text-[13px] bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 py-2.5 px-4 rounded-xl transition-all font-medium border border-blue-100 dark:border-blue-900/30 active:scale-[0.98]" onclick="sendReply(1)" data-i18n="chat_q1">What is this app?</button>
+            <button class="chat-option-btn text-left text-[13px] bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 text-purple-700 dark:text-purple-300 py-2.5 px-4 rounded-xl transition-all font-medium border border-purple-100 dark:border-purple-900/30 active:scale-[0.98]" onclick="sendReply(2)" data-i18n="chat_q2">Who made this?</button>
+            <button class="chat-option-btn text-left text-[13px] bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 py-2.5 px-4 rounded-xl transition-all font-medium border border-emerald-100 dark:border-emerald-900/30 active:scale-[0.98]" onclick="sendReply(3)" data-i18n="chat_q3">How to use this?</button>
+        </div>
+    </div>
+
+    <!-- Minimal Sidebar (Desktop) -->
+    <aside class="w-[240px] bg-white dark:bg-apple-cardDark flex-shrink-0 hidden md:flex flex-col border-r border-gray-200 dark:border-apple-borderDark z-20 transition-colors">
+        <div class="p-8 pb-4 flex items-center space-x-3">
+            <img src="./logo.png?v=5" alt="Logo" class="w-8 h-8 object-contain">
+            <h1 class="text-2xl font-bold tracking-tight">NSRU<span class="ai-gradient-text ml-1">Portal</span></h1>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-100 dark:bg-[#2c2c2e] text-gray-900 dark:text-white font-medium transition-colors">
+                <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                <span data-i18n="nav_dashboard">Dashboard</span>
+            </a>
+            
+            <a href="#" class="system-link flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors font-medium cursor-pointer" data-modal-id="regis" data-url="https://regis.nsru.ac.th/" data-icon="graduation-cap">
+                <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                <span data-i18n="nav_regis">Regis</span>
+            </a>
+             <a href="#" class="system-link flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors font-medium cursor-pointer" data-modal-id="dorm" data-url="https://dorm.nsru.ac.th/" data-icon="home">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span data-i18n="nav_dorm">Dormitory</span>
+            </a>
+             <a href="#" class="system-link flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors font-medium cursor-pointer" data-modal-id="sd" data-url="https://sd.nsru.ac.th/" data-icon="users">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span data-i18n="nav_sd">Student Dev</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-gray-200 dark:border-apple-borderDark flex flex-col gap-2">
+            <button class="lang-toggle-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors font-medium group active:scale-[0.98]">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="languages" class="w-5 h-5 text-blue-500 group-hover:scale-110 transition-transform"></i>
+                    <span data-i18n="lang_toggle">ภาษาไทย</span>
+                </div>
+                <span class="font-bold text-gray-900 dark:text-white lang-indicator-text">EN</span>
+            </button>
+            <button id="theme-toggle" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors font-medium group active:scale-[0.98]">
+                <i data-lucide="moon" class="w-5 h-5 hidden dark:block text-yellow-300 group-hover:scale-110 transition-transform"></i>
+                <i data-lucide="sun" class="w-5 h-5 block dark:hidden text-orange-500 group-hover:scale-110 transition-transform"></i>
+                <span class="dark:hidden" data-i18n="btn_dark_mode">Dark Mode</span>
+                <span class="hidden dark:block text-white" data-i18n="btn_light_mode">Light Mode</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-full bg-apple-light dark:bg-apple-dark transition-colors overflow-hidden relative">
+        
+        <!-- Mobile Header -->
+        <header class="md:hidden h-16 bg-white/80 dark:bg-apple-cardDark/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-apple-borderDark/50 flex items-center justify-between px-6 z-30 flex-shrink-0 sticky top-0 shadow-sm">
+            <div class="flex items-center space-x-2.5">
+                <img src="./logo.png?v=5" alt="Logo" class="w-7 h-7 object-contain">
+                <h1 class="text-xl font-bold tracking-tight">NSRU<span class="ai-gradient-text ml-1">Portal</span></h1>
+            </div>
+            <div class="flex flex-row space-x-3">
+                <button class="lang-toggle-btn w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold text-sm active:scale-90 transition-transform">
+                    <span class="lang-indicator-text">EN</span>
+                </button>
+                <button id="theme-toggle-mobile" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-gray-300 active:scale-90 transition-transform">
+                    <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-yellow-300"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto w-full px-5 py-6 md:p-10 lg:p-12 pb-[100px] md:pb-24 hide-scrollbar">
+            <div class="max-w-5xl mx-auto">
+                
+                <div class="mb-8 md:mb-12 animate-stagger" style="animation-delay: 50ms;">
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter mb-3 md:mb-4">
+                        <span class="ai-gradient-text drop-shadow-sm" id="greeting">Good morning.</span>
+                    </h2>
+                    
+                    <div class="inline-flex items-center space-x-2 text-gray-500 dark:text-gray-300 bg-white dark:bg-apple-cardDark px-4 py-2.5 rounded-full border border-gray-200 dark:border-apple-borderDark shadow-sm">
+                        <i data-lucide="clock" class="w-4 h-4 md:w-5 md:h-5 text-purple-500"></i>
+                        <p class="text-sm md:text-lg font-medium tracking-wide" id="live-clock">Loading...</p>
+                    </div>
+                </div>
+
+                <!-- CARDS GRID -->
+                <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                    
+                    <!-- 1. Regis -->
+                    <a href="#" class="system-link tilt-card group animate-stagger col-span-2 relative overflow-hidden flex flex-row md:flex-col items-center md:items-start justify-between bg-white dark:bg-apple-cardDark rounded-[28px] md:rounded-3xl p-5 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 h-[130px] md:h-[240px]"
+                       style="animation-delay: 100ms;" data-modal-id="regis" data-url="https://regis.nsru.ac.th/apr-login/login/2" data-icon="graduation-cap">
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
+                        <div class="flex items-center gap-4 md:contents w-full">
+                            <div class="w-16 h-16 md:w-14 md:h-14 shrink-0 bg-purple-50 dark:bg-purple-900/20 rounded-[20px] md:rounded-2xl flex items-center justify-center md:mb-5 group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                                <i data-lucide="graduation-cap" class="w-8 h-8 md:w-7 md:h-7 text-purple-600 dark:text-purple-400"></i>
+                            </div>
+                            <div class="flex-1 pr-1 md:pr-0">
+                                <h3 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-0.5 md:mb-2 line-clamp-1" data-i18n="heading_regis">Regis</h3>
+                                <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 md:line-clamp-3 leading-relaxed" data-i18n="desc_regis">ระบบส่วนกลางสำหรับลงทะเบียนเรียน</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center md:hidden shrink-0">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors w-full">
+                            <span data-i18n="btn_enter">Access System</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+
+                    <!-- 2. Student Dev -->
+                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 aspect-square md:aspect-auto md:h-[240px]"
+                       style="animation-delay: 150ms;" data-modal-id="sd" data-url="https://sd.nsru.ac.th/" data-icon="users">
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 dark:bg-blue-900/20 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="users" class="w-6 h-6 md:w-7 md:h-7 text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_sd">Student Dev</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_sd">ข้อมูลสะสมหน่วยกิตกิจกรรม</p>
+                        </div>
+                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+
+                    <!-- 3. Dormitory -->
+                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 aspect-square md:aspect-auto md:h-[240px]"
+                       style="animation-delay: 200ms;" data-modal-id="dorm" data-url="https://dorm.nsru.ac.th/" data-icon="home">
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-orange-50 dark:bg-orange-900/20 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="home" class="w-6 h-6 md:w-7 md:h-7 text-orange-600 dark:text-orange-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_dorm">Dormitory</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_dorm">ระบบจัดการหอพักภายในมหาวิทยาลัย</p>
+                        </div>
+                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+
+                    <!-- 4. E-Learning -->
+                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 aspect-square md:aspect-auto md:h-[240px]"
+                       style="animation-delay: 250ms;" data-modal-id="elearning" data-url="#" data-icon="monitor-play">
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-emerald-50 dark:bg-emerald-900/20 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="monitor-play" class="w-6 h-6 md:w-7 md:h-7 text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_elearning">E-Learning</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_elearning">แพลตฟอร์มเข้าเรียนออนไลน์</p>
+                        </div>
+                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+
+                    <!-- 5. NOC Services -->
+                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/5 aspect-square md:aspect-auto md:h-[240px]"
+                       style="animation-delay: 300ms;" data-modal-id="noc" data-url="https://noc.nsru.ac.th/" data-icon="router">
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-gray-100 dark:bg-white/10 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="router" class="w-6 h-6 md:w-7 md:h-7 text-gray-700 dark:text-gray-300"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_noc">NOC Services</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_noc">ศูนย์เทคโนโลยีสารสนเทศ</p>
+                        </div>
+                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+
+                    <!-- 6. Calendar -->
+                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 border border-gray-100 dark:border-white/5 relative overflow-hidden flex flex-col items-center md:items-start justify-center md:justify-between text-center md:text-left bg-white dark:bg-apple-cardDark rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] aspect-square md:aspect-auto md:h-[240px]"
+                       style="animation-delay: 350ms;" data-modal-id="calendar" data-url="#" data-icon="calendar">
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ai-gradient-bg pointer-events-none"></div>
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-red-50 dark:bg-red-900/20 rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="calendar" class="w-6 h-6 md:w-7 md:h-7 text-red-600 dark:text-red-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1" data-i18n="heading_calendar">Calendar</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_calendar">เช็คปฏิทินแบบละเอียด</p>
+                        </div>
+                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                            <span data-i18n="btn_enter">Enter</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+
+                    <!-- 7. About Portal -->
+                    <a href="#" class="system-link tilt-card group animate-stagger col-span-1 md:col-span-2 lg:col-span-1 relative overflow-hidden flex flex-col items-center justify-center md:items-start md:justify-between text-center md:text-left bg-gradient-to-br from-purple-500 to-indigo-600 dark:from-purple-900/50 dark:to-indigo-900/50 rounded-[24px] md:rounded-3xl p-4 md:p-8 shadow-[0_4px_20px_rgba(99,102,241,0.2)] aspect-square md:aspect-auto md:h-[240px]"
+                       style="animation-delay: 400ms;" data-modal-id="about" data-url="#" data-icon="info">
+                        <i data-lucide="rocket" class="w-24 h-24 absolute -right-4 -bottom-4 text-white/10 dark:text-white/5 transform rotate-12"></i>
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-white/20 backdrop-blur-md rounded-full md:rounded-2xl flex items-center justify-center mb-2.5 md:mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="info" class="w-6 h-6 md:w-7 md:h-7 text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm md:text-2xl font-bold text-white tracking-tight mb-1" data-i18n="heading_about">About Portal</h3>
+                            <p class="text-white/80 text-[11px] md:text-sm line-clamp-2 leading-relaxed" data-i18n="desc_about">รวมทุกเว็บไซต์มารวมไว้ให้จิ้มจบในที่เดียว</p>
+                        </div>
+                        <div class="hidden md:flex items-center text-sm font-semibold mt-4 text-white/60 group-hover:text-white transition-colors">
+                            <span data-i18n="btn_read_more">Read More</span> <i data-lucide="arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <footer class="mt-16 mb-4 text-center animate-stagger" style="animation-delay: 600ms;">
+                    <div class="inline-flex items-center justify-center w-14 h-14 bg-white dark:bg-[#2c2c2e] rounded-full mb-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] border border-gray-100 dark:border-white/10 overflow-hidden relative">
+                        <img src="./logo.png?v=5" alt="NSRU Logo" class="w-full h-full object-cover scale-[1.15]" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23888\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><circle cx=\'12\' cy=\'12\' r=\'10\'></circle><path d=\'M12 16v-4\'></path><path d=\'M12 8h.01\'></path></svg>'">
+                    </div>
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white mb-2 tracking-tight" data-i18n="footer_title">NSRU Portal Space</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto leading-relaxed" data-i18n="footer_desc">
+                        จัดทำขึ้นเพื่อนักศึกษามหาวิทยาลัยราชภัฏนครสวรรค์<br>รวบรวมทุกแพลตฟอร์มการศึกษาไว้ในแอปเดียว
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </main>
+
+    <!-- UI Modal -->
+    <div id="info-modal" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-400 ease-out">
+        <div class="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-md" onclick="closeModal()"></div>
+        <div id="modal-panel" class="bg-white dark:bg-apple-cardDark w-[90%] max-w-lg rounded-3xl shadow-2xl relative z-10 transform scale-95 opacity-0 transition-all duration-400 ease-out p-6 md:p-8 border border-white/20 dark:border-white/10">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 dark:hover:text-white bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+            <div id="modal-icon-container" class="w-16 h-16 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 flex items-center justify-center mb-5"></div>
+            <h2 id="modal-title" class="text-2xl font-bold mb-2 tracking-tight text-gray-900 dark:text-white">Title</h2>
+            <p id="modal-desc" class="text-gray-500 dark:text-gray-400 text-sm mb-6 leading-relaxed">Description goes here.</p>
+            <div class="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl p-5 mb-8">
+                <div class="flex items-center space-x-2 mb-2">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-orange-500"></i>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400" data-i18n="modal_why">Why is this important?</h4>
+                </div>
+                <p id="modal-importance" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">Importance text.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+                <button onclick="closeModal()" data-i18n="modal_cancel" class="w-full sm:w-1/3 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-900 dark:text-white rounded-xl py-3.5 font-semibold transition-colors text-sm">Cancel</button>
+                <a id="modal-continue" href="#" target="_blank" onclick="closeModal()" class="w-full sm:w-2/3 ai-gradient-bg text-white rounded-xl py-3.5 font-bold text-center hover:opacity-90 transition-opacity shadow-[0_8px_20px_rgba(151,8,204,0.2)] text-sm">
+                    <span data-i18n="modal_continue">Continue to System</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+        lucide.createIcons();
+
+        // 1. Language System
+        let currentLang = localStorage.getItem('language') || 'th';
+        function applyLanguage(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
+            });
+            document.documentElement.lang = lang;
+            const indText = lang === 'th' ? 'EN' : 'TH';
+            document.querySelectorAll('.lang-indicator-text').forEach(el => el.innerText = indText);
+            updateLiveTime();
+        }
+        function toggleLanguage() { currentLang = currentLang === 'th' ? 'en' : 'th'; localStorage.setItem('language', currentLang); applyLanguage(currentLang); }
+        document.querySelectorAll('.lang-toggle-btn').forEach(btn => btn.addEventListener('click', toggleLanguage));
+        applyLanguage(currentLang);
+
+        // 2. Theme UI
+        document.querySelectorAll('#theme-toggle, #theme-toggle-mobile').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isD = document.documentElement.classList.toggle('dark');
+                localStorage.theme = isD ? 'dark' : 'light';
+            });
+        });
+
+        // 3. Clock & Greeting
+        function updateLiveTime() {
+            const h = new Date().getHours();
+            const langD = translations[currentLang];
+            let g = langD.greeting_evening;
+            if(h>=5 && h<12) g = langD.greeting_morning;
+            else if(h>=12 && h<17) g = langD.greeting_afternoon;
+            document.getElementById('greeting').innerText = g;
+            const l = currentLang === 'th' ? 'th-TH' : 'en-US';
+            document.getElementById('live-clock').innerHTML = new Date().toLocaleDateString(l, {weekday:'long', year:'numeric', month:'short', day:'numeric'}) + ` &nbsp;&bull;&nbsp; <span class="text-gray-900 dark:text-white font-bold ml-1">${new Date().toLocaleTimeString(l, {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false})}</span>`;
+        }
+        setInterval(updateLiveTime, 1000);
+
+        // 4. Modals
+        function openModal(data) {
+            const t = translations[currentLang];
+            document.getElementById('modal-title').innerText = t['modal_' + data.id + '_title'];
+            document.getElementById('modal-desc').innerText = t['modal_' + data.id + '_desc'];
+            document.getElementById('modal-importance').innerText = t['modal_' + data.id + '_imp'];
+            document.getElementById('modal-continue').href = data.url;
+            document.getElementById('modal-icon-container').innerHTML = `<i data-lucide="${data.icon}" class="w-8 h-8 text-gray-800 dark:text-white"></i>`;
+            lucide.createIcons();
+            const md = document.getElementById('info-modal'), mp = document.getElementById('modal-panel');
+            md.classList.replace('opacity-0','opacity-100'); md.classList.remove('pointer-events-none');
+            mp.classList.replace('opacity-0','opacity-100'); mp.classList.replace('scale-95','scale-100');
+            document.body.classList.add('modal-open');
+        }
+        function closeModal() {
+            const md = document.getElementById('info-modal'), mp = document.getElementById('modal-panel');
+            md.classList.replace('opacity-100','opacity-0'); 
+            mp.classList.replace('opacity-100','opacity-0'); mp.classList.replace('scale-100','scale-95');
+            setTimeout(() => { md.classList.add('pointer-events-none'); document.body.classList.remove('modal-open'); }, 300);
+        }
+        document.querySelectorAll('.system-link').forEach(link => {
+            link.addEventListener('click', (e) => { e.preventDefault(); openModal({id: link.getAttribute('data-modal-id'), icon: link.getAttribute('data-icon'), url: link.getAttribute('data-url')}); });
+        });
+
+        // 5. Chatbot Setup
+        let isChatOpen = false;
+        function toggleChatbot() {
+            const wind = document.getElementById('chatbot-window');
+            isChatOpen = !isChatOpen;
+            if(isChatOpen) {
+                wind.classList.replace('opacity-0','opacity-100'); wind.classList.replace('scale-95','scale-100'); wind.classList.remove('pointer-events-none');
+            } else {
+                wind.classList.replace('opacity-100','opacity-0'); wind.classList.replace('scale-100','scale-95'); wind.classList.add('pointer-events-none');
+                setTimeout(() => {
+                    const box = document.getElementById('chat-messages');
+                    const t = translations[currentLang];
+                    box.innerHTML = `<div class="flex gap-2 w-max max-w-[85%] mt-1"><div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="bg-white dark:bg-white/10 border border-gray-100 dark:border-white/5 p-3 rounded-2xl rounded-tl-sm text-[13px] text-gray-800 dark:text-gray-200 shadow-sm leading-relaxed" data-i18n="chat_greeting">${t['chat_greeting']}</div></div>`;
+                    lucide.createIcons();
+                }, 300);
+            }
+        }
+
+        function sendReply(qId) {
+            const box = document.getElementById('chat-messages');
+            const t = translations[currentLang];
+            const uQ = t['chat_q' + qId];
+            
+            box.insertAdjacentHTML('beforeend', `<div class="flex gap-2 w-max max-w-[85%] self-end chat-slide-up" style="margin-left:auto;"><div class="bg-blue-600 p-3 rounded-2xl rounded-tr-sm text-[13px] text-white shadow-sm leading-relaxed">${uQ}</div></div>`);
+            
+            const typId = 'typ-' + Date.now();
+            box.insertAdjacentHTML('beforeend', `<div id="${typId}" class="flex gap-2 w-max max-w-[85%] mt-1"><div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-centershadow-inner"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="bg-white dark:bg-white/10 border border-gray-100 dark:border-white/5 p-3 rounded-2xl rounded-tl-sm flex items-center gap-1 h-[44px]"><span class="w-1.5 h-1.5 bg-gray-300 dark:bg-gray-500 rounded-full animate-bounce"></span><span class="w-1.5 h-1.5 bg-gray-300 dark:bg-gray-500 rounded-full animate-bounce" style="animation-delay: 150ms"></span><span class="w-1.5 h-1.5 bg-gray-300 dark:bg-gray-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span></div></div>`);
+            lucide.createIcons(); box.scrollTop = box.scrollHeight;
+
+            setTimeout(() => {
+                document.getElementById(typId).remove();
+                const aiA = t['chat_a' + qId];
+                box.insertAdjacentHTML('beforeend', `<div class="flex gap-2 w-max max-w-[85%] chat-slide-up mb-2"><div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="bg-white dark:bg-white/10 border border-gray-100 dark:border-white/5 p-3 rounded-2xl rounded-tl-sm text-[13px] text-gray-800 dark:text-gray-200 shadow-sm leading-relaxed">${aiA}</div></div>`);
+                lucide.createIcons(); box.scrollTop = box.scrollHeight;
+            }, 800);
+        }
+    </script>
+</body>
+</html>
