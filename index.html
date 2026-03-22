@@ -1204,6 +1204,8 @@
             const list = document.getElementById('full-alerts-list');
             if(!list) return;
 
+            notificationData = generateDynamicNotifications(); // Dynamic Sync
+
             if(typeof notificationData === 'undefined' || notificationData.length === 0) {
                 list.innerHTML = `<div class="py-12 text-center text-gray-400"><i data-lucide="bell-off" class="w-10 h-10 mx-auto mb-2 opacity-50"></i><p class="text-sm">ไม่มีรายการแจ้งเตือนในขณะนี้</p></div>`;
                 return;
@@ -1238,23 +1240,34 @@
         let weatherDetails = null; // Store full response payload
         async function fetchWeather() {
             try {
-                const res = await fetch('https://wttr.in/NakhonSawan?format=j1');
+                // Fetch from Open-Meteo for Nakhon Sawan
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=15.6881&longitude=100.1089&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=Asia%2FBangkok');
                 const data = await res.json();
-                const current = data.current_condition[0];
+                const current = data.current;
                 weatherDetails = current; // Save for modal
-                const tempC = current.temp_C;
-                const code = current.weatherCode;
+                const tempC = Math.round(current.temperature_2m);
+                const code = current.weather_code;
                 
-                let icon = '🌤️';
-                if (['200', '389', '386'].includes(code)) icon = '⛈️';
-                else if (['353', '356', '359', '308', '299', '296', '305', '302', '311', '314', '266'].includes(code)) icon = '🌧️';
-                else if (['113'].includes(code)) icon = '☀️';
-                else if (['116', '119'].includes(code)) icon = '⛅';
-                else if (['122', '143', '248', '260'].includes(code)) icon = '☁️';
+                let icon = '⛅';
+                if ([95, 96, 99].includes(code)) icon = '⛈️';
+                else if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 71, 73, 75, 77, 80, 81, 82, 85, 86].includes(code)) icon = '🌧️';
+                else if ([0, 1].includes(code)) icon = '☀️';
+                else if ([2].includes(code)) icon = '⛅';
+                else if ([3, 45, 48].includes(code)) icon = '☁️';
+                
+                let desc = 'สภาพอากาศทั่วไป';
+                if ([0, 1].includes(code)) desc = 'ท้องฟ้าโปร่ง (Clear)';
+                else if ([2, 3].includes(code)) desc = 'มีเมฆบางส่วน (Cloudy)';
+                else if ([45, 48].includes(code)) desc = 'มีหมอก (Fog)';
+                else if ([51, 53, 55, 56, 57].includes(code)) desc = 'ฝนปรอยเบาๆ (Drizzle)';
+                else if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) desc = 'ฝนตก (Rain)';
+                else if ([95, 96, 99].includes(code)) desc = 'พายุฝนฟ้าคะนอง (Thunder)';
+                weatherDetails.translated_desc = desc;
 
                 const iconEl = document.getElementById('weather-icon');
                 if(iconEl) {
                     iconEl.innerHTML = icon;
+                    iconEl.className = "text-lg md:text-xl drop-shadow-sm"; // reset class
                     if(icon === '☀️') iconEl.classList.add('animate-[spin_8s_linear_infinite]');
                     else if(icon === '🌧️' || icon === '⛈️') iconEl.classList.add('animate-bounce');
                 }
@@ -1274,7 +1287,17 @@
             } catch(e) {
                 console.log('Weather API unvailable:', e);
                 const pill = document.getElementById('weather-pill');
-                if(pill) pill.style.display = 'none';
+                if(pill) {
+                    pill.classList.replace('opacity-0', 'opacity-100');
+                    const tempEl = document.getElementById('weather-temp');
+                    if(tempEl) tempEl.innerText = '--°C';
+                    const iconEl = document.getElementById('weather-icon');
+                    if(iconEl) {
+                        iconEl.innerHTML = '⛅';
+                        iconEl.className = "text-lg md:text-xl drop-shadow-sm";
+                    }
+                }
+                applyWeatherTheme('⛅'); // Fallback to Cloudy theme
             }
         }
         window.addEventListener('DOMContentLoaded', fetchWeather);
@@ -1326,40 +1349,35 @@
             if(!weatherDetails) return;
             openConfigModal('สภาพอากาศ (Weather)');
             
-            const humidity = weatherDetails.humidity;
-            const wind = weatherDetails.windspeedKmph;
-            const uv = weatherDetails.uvIndex;
-            const feelsLike = weatherDetails.FeelsLikeC;
-            const desc = weatherDetails.weatherDesc[0].value;
+            const humidity = weatherDetails.relative_humidity_2m || '--';
+            const wind = weatherDetails.wind_speed_10m ? Math.round(weatherDetails.wind_speed_10m) : '--';
+            const feelsLike = weatherDetails.apparent_temperature ? Math.round(weatherDetails.apparent_temperature) : '--';
+            const desc = weatherDetails.translated_desc || '--';
+            const temp = weatherDetails.temperature_2m ? Math.round(weatherDetails.temperature_2m) : '--';
 
             document.getElementById('config-body').innerHTML = `
                 <div class="text-center mb-6">
                     <div id="modal-weather-icon" class="text-5xl mb-2 drop-shadow-md">${document.getElementById('weather-icon').innerHTML}</div>
-                    <h3 class="text-4xl font-black text-gray-900 dark:text-white mb-1">${weatherDetails.temp_C}°C</h3>
+                    <h3 class="text-4xl font-black text-gray-900 dark:text-white mb-1">${temp}°C</h3>
                     <p class="text-sm font-bold text-sky-500 uppercase tracking-widest">${desc}</p>
                     <p class="text-xs text-gray-400 mt-1">รู้สึกเหมือน (Feels Like): ${feelsLike}°C</p>
                 </div>
 
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="bg-gray-50 dark:bg-apple-cardDark/50 border border-gray-100 dark:border-white/5 p-3 rounded-2xl text-center shadow-sm">
-                        <i data-lucide="droplet" class="w-5 h-5 mx-auto mb-1 text-blue-500"></i>
-                        <p class="text-[11px] font-bold text-gray-400">ความชื้น</p>
-                        <p class="text-sm font-black text-gray-900 dark:text-white mt-0.5">${humidity}%</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-50 dark:bg-apple-cardDark/50 border border-gray-100 dark:border-white/5 p-4 rounded-2xl text-center shadow-sm">
+                        <i data-lucide="droplet" class="w-6 h-6 mx-auto mb-2 text-blue-500"></i>
+                        <p class="text-xs font-bold text-gray-400">ความชื้น</p>
+                        <p class="text-base font-black text-gray-900 dark:text-white mt-1">${humidity}%</p>
                     </div>
-                    <div class="bg-gray-50 dark:bg-apple-cardDark/50 border border-gray-100 dark:border-white/5 p-3 rounded-2xl text-center shadow-sm">
-                        <i data-lucide="wind" class="w-5 h-5 mx-auto mb-1 text-teal-500"></i>
-                        <p class="text-[11px] font-bold text-gray-400">ความเร็วลม</p>
-                        <p class="text-sm font-black text-gray-900 dark:text-white mt-0.5">${wind} km/h</p>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-apple-cardDark/50 border border-gray-100 dark:border-white/5 p-3 rounded-2xl text-center shadow-sm">
-                        <i data-lucide="sun" class="w-5 h-5 mx-auto mb-1 text-orange-500"></i>
-                        <p class="text-[11px] font-bold text-gray-400">ดัชนี UV</p>
-                        <p class="text-sm font-black text-gray-900 dark:text-white mt-0.5">${uv}</p>
+                    <div class="bg-gray-50 dark:bg-apple-cardDark/50 border border-gray-100 dark:border-white/5 p-4 rounded-2xl text-center shadow-sm">
+                        <i data-lucide="wind" class="w-6 h-6 mx-auto mb-2 text-teal-500"></i>
+                        <p class="text-xs font-bold text-gray-400">ความเร็วลม</p>
+                        <p class="text-base font-black text-gray-900 dark:text-white mt-1">${wind} km/h</p>
                     </div>
                 </div>
 
-                <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/20 text-center">
-                    <p class="text-xs font-bold text-blue-600 dark:text-blue-400 leading-relaxed">รายงานสภาพอากาศสำหรับ นครสวรรค์ ณ ปัจจุบัน</p>
+                <div class="mt-5 p-3.5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/20 text-center">
+                    <p class="text-xs font-bold text-blue-600 dark:text-blue-400 leading-relaxed">รายงานสภาพอากาศสดสำหรับนครสวรรค์ โดย Open-Meteo</p>
                 </div>
             `;
             lucide.createIcons();
@@ -1690,11 +1708,62 @@
         }
 
         // --- Notification Tray Logic ---
-        let notificationData = [
-            { id: 1, title: 'กำหนดการชำระเงินค่าเทอม', desc: 'แจ้งกำหนดการชำระเงินค่าลงทะเบียนเรียนภาคเรียนที่ 2/2569 ขยายเวลาถึง 31 มี.ค.', time: '10 นาทีที่แล้ว', isRead: false, type: 'important' },
-            { id: 2, title: 'ประกาศผลสอบกลางภาคออกแล้ว', desc: 'วิชา 001103 วิธีการวิจัยเบื้องต้น สามารถตรวจสอบผ่านระบบ Regis ได้แล้ววันนี้', time: '1 ชั่วโมงที่แล้ว', isRead: false, type: 'info' },
-            { id: 3, title: 'แจ้งเตือนคลาสเรียน', desc: 'อาจารย์ประกาศงดคลาสบ่ายวิชา 022410 คอมพิวเตอร์เน็ตเวิร์ก', time: 'เมื่อวานนี้', isRead: true, type: 'warning' }
-        ];
+        function generateDynamicNotifications() {
+            let dynamicData = [];
+            const now = new Date();
+            const todayInt = now.getDay();
+            const currentMins = now.getHours() * 60 + now.getMinutes();
+
+            // 1. From Timetable (Classes)
+            if (typeof timetable !== 'undefined' && timetable.length > 0) {
+                let todayClasses = timetable.filter(c => parseInt(c.day) === todayInt);
+                todayClasses.forEach((c, index) => {
+                    const cStart = parseInt(c.start.split(':')[0]) * 60 + parseInt(c.start.split(':')[1]);
+                    if (cStart > currentMins) {
+                        dynamicData.push({
+                            id: 'class-' + index,
+                            title: `มีเรียนคลาสต่อไป (${c.subject})`,
+                            desc: `วิชาจากตารางเรียนของคุณเริ่มเวลา ${c.start} น. ที่ห้อง ${c.room}`,
+                            time: 'วันนี้',
+                            isRead: false,
+                            type: 'info'
+                        });
+                    }
+                });
+            }
+
+            // 2. From Countdowns (Tasks)
+            if (typeof countdowns !== 'undefined' && countdowns.length > 0) {
+                countdowns.forEach((c, index) => {
+                    const cdDate = new Date(c.date);
+                    const diff = cdDate - now;
+                    if (diff > 0) {
+                        const days = Math.floor(diff/(1000*60*60*24));
+                        const hours = Math.floor((diff/(1000*60*60))%24);
+                        let timeStr = days > 0 ? `อีก ${days} วัน` : `อีก ${hours} ชั่วโมง`;
+                        
+                        dynamicData.push({
+                            id: 'cd-' + index,
+                            title: `⏰ กำหนดส่งงาน: ${c.title}`,
+                            desc: `ใกล้ครบกำหนดส่งแล้ว (${timeStr}) ตรวจสอบรายละเอียดด่วน`,
+                            time: cdDate.toLocaleDateString('th-TH'),
+                            isRead: false,
+                            type: days <= 1 ? 'important' : 'warning'
+                        });
+                    }
+                });
+            }
+
+            // If empty, default placeholder
+            if (dynamicData.length === 0) {
+                dynamicData = [
+                    { id: 'def-1', title: 'ไม่มีแจ้งเตือนขณะนี้', desc: 'เพิ่มรายวิชาในตารางเรียนและงานค้างเพื่อเปิดรับการแจ้งเตือนอัตโนมัติ', time: 'ระบบ', isRead: true, type: 'info' }
+                ];
+            }
+            return dynamicData;
+        }
+
+        let notificationData = generateDynamicNotifications();
 
         function toggleNotificationTray(isOpen) {
             const tray = document.getElementById('notification-tray');
@@ -1702,6 +1771,7 @@
             if(!tray || !backdrop) return;
 
             if (isOpen) {
+                notificationData = generateDynamicNotifications(); // Refresh Data
                 tray.classList.replace('-translate-y-full', 'translate-y-0');
                 backdrop.classList.replace('opacity-0', 'opacity-100');
                 backdrop.classList.remove('pointer-events-none');
@@ -1716,6 +1786,8 @@
         function renderNotificationList() {
             const list = document.getElementById('notification-list');
             if(!list) return;
+
+            notificationData = generateDynamicNotifications(); // Dynamic Sync
 
             if(notificationData.length === 0) {
                 list.innerHTML = `<div class="py-12 text-center text-gray-400"><i data-lucide="bell-off" class="w-10 h-10 mx-auto mb-2 opacity-50"></i><p class="text-xs">ไม่มีรายการแจ้งเตือน</p></div>`;
@@ -1762,6 +1834,15 @@
 
         // Init Tray Count on Load
         window.addEventListener('DOMContentLoaded', () => { setTimeout(updateHeaderBadge, 1000); });
+
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker Registered!', reg))
+                    .catch(err => console.error('Service Worker Registration Failed!', err));
+            });
+        }
     </script>
 </body>
 </html>
