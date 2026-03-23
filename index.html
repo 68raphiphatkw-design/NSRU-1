@@ -323,6 +323,7 @@
             box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
         }
         .dark .nav-badge-dot { border-color: #1c1c1e; }
+        
         /* --- Dynamic Weather Themes --- */
         .weather-theme-sunny {
             background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 30%, rgba(56, 189, 248, 0.1) 100%) !important;
@@ -376,6 +377,125 @@
         body.modal-open { overflow: hidden; }
         html { visibility: hidden; }
         html.loaded { visibility: visible; }
+
+        /* --- AI Modern Overhaul --- */
+        .ai-window-expanded {
+            width: calc(100vw - 40px) !important;
+            height: calc(100vh - 120px) !important;
+            max-width: 600px !important;
+            bottom: 100px !important;
+        }
+        @media (max-width: 768px) {
+            .ai-window-expanded {
+                width: 100dvw !important;
+                height: 100dvh !important;
+                bottom: 0 !important;
+                right: 0 !important;
+                border-radius: 0 !important;
+                max-width: none !important;
+            }
+        }
+        .ai-glow-bg {
+            background: radial-gradient(circle at 70% 30%, rgba(151, 8, 204, 0.08), transparent 50%),
+                        radial-gradient(circle at 30% 70%, rgba(67, 203, 255, 0.08), transparent 50%);
+        }
+        .ai-bubble-user {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-bubble-bot {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            border-bottom-left-radius: 4px;
+        }
+        .dark .ai-bubble-bot {
+            background: rgba(44, 44, 46, 0.6);
+            border-color: rgba(255, 255, 255, 0.05);
+            color: #f5f5f7;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes message-slide-up {
+            0% { opacity: 0; transform: translateY(10px) scale(0.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-ai-msg { animation: message-slide-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .ai-typing-dot { animation: typing-bounce 0.6s infinite alternate; }
+        @keyframes typing-bounce { to { transform: translateY(-4px); } }
+
+        /* --- Global Liquid Glass Fully Unified (iOS 26 Style) --- */
+        #mobile-dashboard, #desktop-dashboard, header, .quick-action-grid button, #notification-tray, .tile-card, #chatbot-window, .modal-content, input, select, textarea, .config-modal-content {
+            background: rgba(255, 255, 255, 0.52) !important; /* Bumped Opacity for Readability */
+            backdrop-filter: blur(24px) saturate(160%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.35) !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06) !important;
+            border-radius: 28px !important; 
+        }
+        
+        aside {
+            background: rgba(255, 255, 255, 0.6) !important; /* Bumped Opacity */
+            backdrop-filter: blur(24px) saturate(160%) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.25) !important;
+        }
+
+        .dark #mobile-dashboard, .dark #desktop-dashboard, .dark header, .dark .quick-action-grid button, .dark #notification-tray, .dark .tile-card, .dark #chatbot-window, .dark .modal-content, .dark input, .dark select, .dark textarea, .dark .config-modal-content {
+            background: rgba(20, 20, 25, 0.55) !important; /* Bumped Dark Opacity */
+            backdrop-filter: blur(24px) saturate(160%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        .dark aside {
+            background: rgba(22, 22, 28, 0.65) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+        }
+
+        /* Float smooth Navbars and Docks into a Capsule (Pill) */
+        #bottom-nav {
+            background: rgba(255, 255, 255, 0.62) !important;
+            backdrop-filter: blur(24px) saturate(160%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            
+            /* Floating Capsule Layout */
+            position: fixed !important;
+            bottom: 16px !important;
+            left: 16px !important;
+            right: 16px !important;
+            width: calc(100% - 32px) !important;
+            max-width: 500px !important;
+            margin: 0 auto !important;
+            border-radius: 40px !important;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12) !important;
+            z-index: 40 !important;
+            padding: 8px 0 !important;
+            height: auto !important;
+        }
+        .dark #bottom-nav {
+            background: rgba(20, 20, 25, 0.65) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Specific Inputs Styling for glass reading */
+        input, select, textarea {
+            color: #111827 !important;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid rgba(0, 0, 0, 0.12) !important;
+        }
+        .dark input, .dark select, .dark textarea {
+            color: #f3f4f6 !important;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        }
+
+        /* Ambient text shadow adjustments for readability over background */
+        h1, h2, h3, h4, .font-bold { text-shadow: 0 1px 1px rgba(0,0,0,0.03); }
+        .dark h1, .dark h2, .dark h3, .dark h4 { text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+        .bg-gray-50, .dark .bg-black\/20, .bg-white, .dark .bg-apple-cardDark {
+            background: transparent !important;
+        }
     </style>
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { document.documentElement.classList.add('dark'); } 
@@ -385,6 +505,8 @@
     </script>
 </head>
 <body class="h-[100dvh] w-screen overflow-hidden flex font-sans text-gray-900 dark:text-gray-100 relative">
+    
+
 
     <!-- Interactive AI Orb (Visible on Mobile & PC) -->
     <div class="ai-orb-container flex">
@@ -409,29 +531,42 @@
                     </div>
                 </div>
             </div>
-            <button onclick="toggleChatbot()" class="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded-full transition-colors active:scale-90">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
+            <div class="flex items-center gap-2">
+                <button id="ai-expand-btn" onclick="toggleExpandChat(event)" class="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded-full transition-colors active:scale-90 mr-1">
+                    <i data-lucide="maximize-2" id="ai-expand-icon" class="w-4 h-4"></i>
+                </button>
+                <button onclick="toggleChatbot()" class="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded-full transition-colors active:scale-90">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Chat Content Area -->
-        <div class="p-4 flex-1 h-[260px] md:h-[300px] overflow-y-auto bg-gray-50 dark:bg-black/20 flex flex-col gap-3 scroll-smooth" id="chat-messages">
+        <div class="p-4 flex-1 h-[280px] md:h-[320px] overflow-y-auto ai-glow-bg flex flex-col gap-4 scroll-smooth" id="chat-messages">
             <!-- Initial Greeting -->
-            <div class="flex gap-2 w-max max-w-[85%] mt-1">
-                <div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner">
+            <div class="flex gap-2 w-max max-w-[85%] mt-1 animate-ai-msg">
+                <div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner mt-0.5">
                     <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
                 </div>
-                <div class="bg-white dark:bg-white/10 border border-gray-100 dark:border-white/5 p-3 rounded-2xl rounded-tl-sm text-[13px] text-gray-800 dark:text-gray-200 shadow-sm leading-relaxed" data-i18n="chat_greeting">
-                    Hello! Try asking me a question below:
+                <div class="ai-bubble-bot p-3.5 rounded-2xl text-[13px] text-gray-800 dark:text-gray-200 shadow-sm leading-relaxed" data-i18n="chat_greeting">
+                    สวัสดีครับ! วันนี้ผมผู้ช่วย Nano AI (Gemini 2.5) มีอะไรให้ผมรับใช้ไหมครับ?
                 </div>
             </div>
         </div>
 
-        <!-- Quick Options -->
+        <!-- Input Area (New / Gemini AI Integration) -->
         <div class="p-3 bg-white dark:bg-apple-cardDark border-t border-gray-100 dark:border-white/5 flex flex-col gap-2 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] relative">
-            <button class="chat-option-btn text-left text-[13px] bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 py-2.5 px-4 rounded-xl transition-all font-medium border border-blue-100 dark:border-blue-900/30 active:scale-[0.98]" onclick="sendReply(1)" data-i18n="chat_q1">What is this app?</button>
-            <button class="chat-option-btn text-left text-[13px] bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 text-purple-700 dark:text-purple-300 py-2.5 px-4 rounded-xl transition-all font-medium border border-purple-100 dark:border-purple-900/30 active:scale-[0.98]" onclick="sendReply(2)" data-i18n="chat_q2">Who made this?</button>
-            <button class="chat-option-btn text-left text-[13px] bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 py-2.5 px-4 rounded-xl transition-all font-medium border border-emerald-100 dark:border-emerald-900/30 active:scale-[0.98]" onclick="sendReply(3)" data-i18n="chat_q3">How to use this?</button>
+            <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+                <button class="whitespace-nowrap flex-shrink-0 text-[11px] bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 py-1.5 px-3 rounded-full transition-all font-medium border border-blue-100 dark:border-blue-900/30" onclick="sendGeminiMsg('วิชาเรียนวันนี้มีอะไรบ้าง?')">ตารางเรียน</button>
+                <button class="whitespace-nowrap flex-shrink-0 text-[11px] bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 py-1.5 px-3 rounded-full transition-all font-medium border border-orange-100 dark:border-orange-900/30" onclick="sendGeminiMsg('มีงานอะไรใกล้ถึงกำหนดส่งไหม?')">งานค้าง / สอบ</button>
+                <button class="whitespace-nowrap flex-shrink-0 text-[11px] bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 py-1.5 px-3 rounded-full transition-all font-medium border border-emerald-100 dark:border-emerald-900/30" onclick="sendGeminiMsg('สรุปข่าวล่าสุดให้หน่อย')">สรุปข่าว</button>
+            </div>
+            <div class="flex items-center gap-2 relative">
+                <input type="text" id="ai-chat-input" placeholder="ถาม AI (เช่น วันนี้มีเรียนไหม)..." class="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-xl pl-3 pr-10 py-2.5 text-[13px] text-gray-900 dark:text-white outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-gray-400" onkeypress="if(event.key==='Enter') sendGeminiMsg()">
+                <button onclick="sendGeminiMsg()" class="absolute right-1 text-white ai-gradient-bg p-1.5 rounded-lg active:scale-95 transition-transform shadow-md border-none flex items-center justify-center h-8 w-8">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1197,8 +1332,11 @@
                     const iconName = i.getAttribute('data-lucide');
                     if(iconName==='home'||iconName==='newspaper'||iconName==='bell'||iconName==='user') i.classList.add('fill-blue-100', 'dark:fill-blue-900/40');
                 }
+
             }
         }
+
+
 
         function renderFullAlerts() {
             const list = document.getElementById('full-alerts-list');
@@ -1657,6 +1795,26 @@
         setInterval(() => { updateTimetableUI(); updateCountdownUI(); updateBottomNavBadges(); }, 60000);
 
         // 8. Chatbot Setup
+        let isChatExpanded = false;
+        function toggleExpandChat(e) {
+            if(e) { e.preventDefault(); e.stopPropagation(); }
+            const wind = document.getElementById('chatbot-window');
+            const icon = document.getElementById('ai-expand-icon');
+            const messages = document.getElementById('chat-messages');
+            
+            isChatExpanded = !isChatExpanded;
+            if(isChatExpanded) {
+                wind.classList.add('ai-window-expanded');
+                if(icon) icon.setAttribute('data-lucide', 'minimize-2');
+                if(messages) { messages.style.height = 'auto'; messages.classList.add('flex-1'); }
+            } else {
+                wind.classList.remove('ai-window-expanded');
+                if(icon) icon.setAttribute('data-lucide', 'maximize-2');
+                if(messages) { messages.style.height = ''; }
+            }
+            lucide.createIcons();
+        }
+
         let isChatOpen = false;
         function toggleChatbot() {
             const wind = document.getElementById('chatbot-window');
@@ -1664,47 +1822,106 @@
             if(isChatOpen) {
                 wind.classList.replace('opacity-0','opacity-100'); wind.classList.replace('scale-95','scale-100'); wind.classList.remove('pointer-events-none');
                 
-                // Render Suggestions on Open
+                // Prompt Options Insert on Open
                 const box = document.getElementById('chat-messages');
                 const t = translations[currentLang];
-                if(box.innerHTML.includes('chat_greeting') || box.innerText.includes('Hello!')) {
+                if(box.innerHTML.includes('สวัสดี') || box.innerText.includes('Hello')) {
                     box.insertAdjacentHTML('beforeend', `
-                        <div class="flex flex-wrap gap-1.5 mt-2 ml-9">
-                            <button onclick="sendReply(1)" class="text-[11px] bg-blue-50 hover:bg-blue-100 dark:bg-white/5 dark:hover:bg-white/10 text-blue-600 dark:text-blue-400 font-bold px-3 py-1.5 rounded-full border border-blue-100 dark:border-white/5 shadow-sm active:scale-95 transition-all">📊 เกรดเทอมนี้ (Grades)</button>
-                            <button onclick="sendReply(2)" class="text-[11px] bg-purple-50 hover:bg-purple-100 dark:bg-white/5 dark:hover:bg-white/10 text-purple-600 dark:text-purple-400 font-bold px-3 py-1.5 rounded-full border border-purple-100 dark:border-white/5 shadow-sm active:scale-95 transition-all">📅 ตารางเรียน (Schedule)</button>
-                            <button onclick="sendReply(3)" class="text-[11px] bg-orange-50 hover:bg-orange-100 dark:bg-white/5 dark:hover:bg-white/10 text-orange-600 dark:text-orange-400 font-bold px-3 py-1.5 rounded-full border border-orange-100 dark:border-white/5 shadow-sm active:scale-95 transition-all">🚨 งานค้าง (Countdowns)</button>
+                        <div class="flex flex-wrap gap-1.5 mt-2 ml-9 animate-ai-msg">
+                            <button onclick="sendGeminiMsg('มีอัปเดตงานค้างในระบบไหม?')" class="text-[11px] bg-blue-50 hover:bg-blue-100 dark:bg-white/5 dark:hover:bg-white/10 text-blue-600 dark:text-blue-400 font-bold px-3 py-1.5 rounded-full border border-blue-100 dark:border-white/5 shadow-sm active:scale-95 transition-all">📊 มีอัปเดตงานไหม?</button>
+                            <button onclick="sendGeminiMsg('วันนี้มีเรียนคลาสไหนบ้าง?')" class="text-[11px] bg-purple-50 hover:bg-purple-100 dark:bg-white/5 dark:hover:bg-white/10 text-purple-600 dark:text-purple-400 font-bold px-3 py-1.5 rounded-full border border-purple-100 dark:border-white/5 shadow-sm active:scale-95 transition-all">📅 สรุปตารางเรียน</button>
                         </div>
                     `);
                     lucide.createIcons();
                 }
             } else {
                 wind.classList.replace('opacity-100','opacity-0'); wind.classList.replace('scale-100','scale-95'); wind.classList.add('pointer-events-none');
+                if(isChatExpanded) toggleExpandChat(); // Collapse if closed
                 setTimeout(() => {
                     const box = document.getElementById('chat-messages');
                     const t = translations[currentLang];
-                    box.innerHTML = `<div class="flex gap-2 w-max max-w-[85%] mt-1"><div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="bg-white dark:bg-white/10 border border-gray-100 dark:border-white/5 p-3 rounded-2xl rounded-tl-sm text-[13px] text-gray-800 dark:text-gray-200 shadow-sm leading-relaxed" data-i18n="chat_greeting">${t['chat_greeting']}</div></div>`;
+                    box.innerHTML = `<div class="flex gap-2 w-max max-w-[85%] mt-1 animate-ai-msg"><div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner mt-0.5"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="ai-bubble-bot p-3.5 rounded-2xl text-[13px] text-gray-800 dark:text-gray-200 shadow-sm leading-relaxed" data-i18n="chat_greeting">สวัสดีครับ! วันนี้ผมผู้ช่วย Nano AI มีอะไรให้ผมรับใช้ไหมครับ?</div></div>`;
                     lucide.createIcons();
                 }, 300);
             }
         }
 
-        function sendReply(qId) {
+        const GEMINI_API_KEY = 'AIzaSyDMkcKMmQPXrx27G0D6T1HovZvZwYD21ps'; // 🔴 นำ API Key ของ Gemini มาใส่ที่นี่ เพื่อให้ AI ใช้งานได้
+
+        async function sendGeminiMsg(text = null) {
+            const inputEl = document.getElementById('ai-chat-input');
             const box = document.getElementById('chat-messages');
-            const t = translations[currentLang];
-            const uQ = t['chat_q' + qId];
+            const msg = text || (inputEl ? inputEl.value.trim() : '');
+            if(!msg) return;
             
-            box.insertAdjacentHTML('beforeend', `<div class="flex gap-2 w-max max-w-[85%] self-end chat-slide-up" style="margin-left:auto;"><div class="bg-blue-600 p-3 rounded-2xl rounded-tr-sm text-[13px] text-white shadow-sm leading-relaxed">${uQ}</div></div>`);
+            if(inputEl) inputEl.value = '';
+
+            box.insertAdjacentHTML('beforeend', `<div class="flex gap-2 w-max max-w-[85%] self-end animate-ai-msg" style="margin-left:auto;"><div class="ai-bubble-user p-3.5 rounded-2xl text-[13px] leading-relaxed shadow-sm">${msg}</div></div>`);
             
             const typId = 'typ-' + Date.now();
-            box.insertAdjacentHTML('beforeend', `<div id="${typId}" class="flex gap-2 w-max max-w-[85%] mt-1"><div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-centershadow-inner"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="bg-white dark:bg-white/10 border border-gray-100 dark:border-white/5 p-3 rounded-2xl rounded-tl-sm flex items-center gap-1 h-[44px]"><span class="w-1.5 h-1.5 bg-gray-300 dark:bg-gray-500 rounded-full animate-bounce"></span><span class="w-1.5 h-1.5 bg-gray-300 dark:bg-gray-500 rounded-full animate-bounce" style="animation-delay: 150ms"></span><span class="w-1.5 h-1.5 bg-gray-300 dark:bg-gray-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span></div></div>`);
+            box.insertAdjacentHTML('beforeend', `<div id="${typId}" class="flex gap-2 w-max max-w-[85%] mt-1 animate-ai-msg"><div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner mt-0.5"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="ai-bubble-bot p-3 rounded-2xl flex items-center gap-1 h-[40px] px-4"><span class="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-300 rounded-full ai-typing-dot"></span><span class="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-300 rounded-full ai-typing-dot" style="animation-delay: 150ms"></span><span class="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-300 rounded-full ai-typing-dot" style="animation-delay: 300ms"></span></div></div>`);
             lucide.createIcons(); box.scrollTop = box.scrollHeight;
 
-            setTimeout(() => {
-                document.getElementById(typId).remove();
-                const aiA = t['chat_a' + qId];
-                box.insertAdjacentHTML('beforeend', `<div class="flex gap-2 w-max max-w-[85%] chat-slide-up mb-2"><div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="bg-white dark:bg-white/10 border border-gray-100 dark:border-white/5 p-3 rounded-2xl rounded-tl-sm text-[13px] text-gray-800 dark:text-gray-200 shadow-sm leading-relaxed">${aiA}</div></div>`);
+            // รวบรวมข้อมูลบนเว็บเพื่อให้ AI สรุปให้
+            const ctxNews = newsData && newsData.length ? newsData.map(n => `- ${n.title}`).join('\\n') : "ไม่มีข่าวสารใหม่";
+            const todayInt = new Date().getDay();
+            const ctxTimetable = timetable && timetable.length ? timetable.filter(c => parseInt(c.day) === todayInt).map(c => `- วิชา ${c.subject} เวลา ${c.start}-${c.end} ห้อง ${c.room}`).join('\\n') : "ไม่มีเรียนวันนี้";
+            const ctxCountdowns = countdowns && countdowns.length ? countdowns.map(c => `- ${c.title} กำหนดการ(เวลา): ${new Date(c.date).toLocaleString('th-TH')}`).join('\\n') : "ไม่มีงานค้างหรือการสอบที่ต้องส่ง/ทำ";
+
+            const systemPrompt = `คุณคือ Nano AI ผู้ช่วยนักศึกษาอัจฉริยะแบบ AI Assistant ในระบบ NSRU Portal
+รับบทเป็นเพื่อนผู้ช่วยและ AI แจ้งเตือน ข้อมูลของคุณคือข้อมูลปัจจุบันของนักศึกษาคนนี้:
+
+[ข่าวสารล่าสุดที่ประกาศในระบบ]
+${ctxNews}
+
+[ตารางเรียนวันนี้]
+${ctxTimetable}
+
+[งานค้าง/กำหนดการ (Countdowns)]
+${ctxCountdowns}
+
+ข้อความจากนักศึกษา: "${msg}"
+ข้อปฏิบัติ: ตอบนักศึกษาอย่างเป็นธรรมชาติ สั้น กระชับ เป็นมิตร (เช่น นักศึกษาถามว่า "วันนี้มีงานต้องส่งไหม" ให้ตอบโดยดูจาก [งานค้าง/กำหนดการ] หรือถามเกี่ยวกับตารางเรียน ให้สรุปจากตารางด้านบน) ถ้าคำถามเป็นเรื่องนอกเหนือจากข้อมูลด้านบน ให้ตอบเท่าที่รู้และช่วยเหลืออย่างสุภาพ ไม่ต้องแสดงข้อมูลดิบหากผู้ใช้ไม่ถาม`;
+
+            try {
+                if(GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+                    throw new Error('กรุณาตั้งค่า GEMINI_API_KEY ใน HTML ก่อนครับ (โปรดแก้ไขโค้ดบรรทัด GEMINI_API_KEY)');
+                }
+
+                let response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + GEMINI_API_KEY, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: systemPrompt }] }]
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorDetails = await response.json().catch(() => ({}));
+                    const backEndMsg = errorDetails.error?.message || 'ไม่ทราบข้อผิดพลาดแน่ชัด';
+                    throw new Error(`เชื่อมต่อ Gemini API ไม่สำเร็จ (${response.status}): ${backEndMsg}`);
+                }
+                
+                const data = await response.json();
+                let aiResponse = "ขออภัย ฉันไม่สามารถดำเนินการได้ในขณะนี้";
+                if(data.candidates && data.candidates[0].content.parts[0].text) {
+                    aiResponse = data.candidates[0].content.parts[0].text;
+                }
+                
+                const typEl = document.getElementById(typId);
+                if(typEl) typEl.remove();
+
+                const formattedHtml = aiResponse.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+
+                box.insertAdjacentHTML('beforeend', `<div class="flex gap-2 w-max max-w-[88%] animate-ai-msg mb-2"><div class="w-7 h-7 rounded-full ai-gradient-bg shrink-0 flex items-center justify-center shadow-inner mt-0.5"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="ai-bubble-bot p-3.5 rounded-2xl text-[13px] leading-relaxed">${formattedHtml}</div></div>`);
                 lucide.createIcons(); box.scrollTop = box.scrollHeight;
-            }, 800);
+                
+            } catch (error) {
+                const typEl = document.getElementById(typId);
+                if(typEl) typEl.remove();
+                box.insertAdjacentHTML('beforeend', `<div class="flex gap-2 w-max max-w-[85%] animate-ai-msg mb-2"><div class="w-7 h-7 rounded-full bg-red-500 shrink-0 flex items-center justify-center shadow-inner mt-0.5"><i data-lucide="alert-circle" class="w-4 h-4 text-white"></i></div><div class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 p-3.5 rounded-2xl text-[13px] text-red-600 dark:text-red-400 shadow-sm leading-relaxed">${error.message}</div></div>`);
+                lucide.createIcons(); box.scrollTop = box.scrollHeight;
+            }
         }
 
         // --- Notification Tray Logic ---
@@ -1843,6 +2060,7 @@
                     .catch(err => console.error('Service Worker Registration Failed!', err));
             });
         }
+
     </script>
 </body>
 </html>
